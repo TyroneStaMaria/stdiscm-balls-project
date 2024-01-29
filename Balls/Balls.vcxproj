@@ -137,9 +137,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Balls.cpp" />
+    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="BallManager.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ball.h" />
+    <ClInclude Include="BallManager.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
