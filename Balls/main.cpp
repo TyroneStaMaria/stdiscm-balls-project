@@ -1,13 +1,20 @@
-// Balls.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 #include <GL/glut.h> // Include the GLUT header file
 #include <iostream>
 #include <numbers>
 #include "Ball.h"
 #include "BallManager.h"
+#include <random>
 
 
-//Ball ball(0.0f, 0.0f, 0.05f, 0.07f); // Initial position and velocity
+
+
+std::random_device rd;  // Obtain a random number from hardware
+std::mt19937 eng(rd()); // Seed the generator
+
+std::uniform_real_distribution<> distrX(-1.0, 1.0); // Define range for x
+std::uniform_real_distribution<> distrY(-1.0, 1.0); // Define range for y
+std::uniform_real_distribution<> distrDX(-0.1, 0.1); // Define range for dx
+std::uniform_real_distribution<> distrDY(-0.1, 0.1); // Define range for dy
 
 
 void display() {
@@ -31,12 +38,19 @@ int main(int argc, char** argv) {
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(1920, 1080);
     glutCreateWindow("OpenGL Bouncing Ball with Class");
 
-    BallManager::addBall(Ball(0.0f, 0.0f, 0.05f, 0.07f));
-    BallManager::addBall(Ball(0.2f, 0.1f, 0.03f, 0.06f));
-    BallManager::addBall(Ball(0.1f, 0.5f, 0.1f, 0.2f));
+    for (int i = 0; i < 1000; i++) {
+        float randomX = distrX(eng);
+        float randomY = distrY(eng);
+        float randomDX = distrDX(eng);
+        float randomDY = distrDY(eng);
 
+        BallManager::addBall(Ball(randomX, randomY, randomDX, randomDY));
+    }
+
+   
 
     glutDisplayFunc(display);
     glutTimerFunc(25, update, 0);

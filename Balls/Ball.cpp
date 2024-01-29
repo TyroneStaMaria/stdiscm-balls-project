@@ -5,14 +5,16 @@ Ball::Ball(float startX, float startY, float startDx, float startDy)
 
 
 void Ball::draw() {
+    float radius = 0.01f;
     glBegin(GL_TRIANGLE_FAN);
     glColor3f(1.0, 0.0, 0.0); // Red color
     glVertex2f(x, y); // Center of circle
     for (int i = 0; i <= 20; i++) {
-        glVertex2f(
-            x + (0.1 * cos(i * 2.0 * PI / 20)),
-            y + (0.1 * sin(i * 2.0 * PI / 20))
-        );
+        float angle = 2.0f * PI * float(i) / float(20);  // Calculate the angle
+        float xComponent = radius * cosf(angle); // Calculate the x component
+        float yComponent = radius * sinf(angle); // Calculate the y component
+
+        glVertex2f(x + xComponent, y + yComponent);
     }
     glEnd();
 }
