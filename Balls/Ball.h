@@ -10,7 +10,7 @@ public:
     Ball(float startX, float startY, float startDx, float startDy);
     void draw();
     void move();
-private:
+    void invertDirection(bool collideX, bool collideY);
     // position
     float x;
     float y;
@@ -18,6 +18,8 @@ private:
     // velocity 
     float dx;
     float dy;
+
+    float radius = 0.01f;
 
 };
 

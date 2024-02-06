@@ -22,6 +22,7 @@ void display() {
     glLoadIdentity();
 
     BallManager::drawBalls(); // Draw all balls
+    BallManager::drawWalls();
 
     glutSwapBuffers();
 }
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
     glutInitWindowSize(1920, 1080);
     glutCreateWindow("OpenGL Bouncing Ball with Class");
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 2; i++) {
         float randomX = distrX(eng);
         float randomY = distrY(eng);
         float randomDX = distrDX(eng);
@@ -49,6 +50,8 @@ int main(int argc, char** argv) {
 
         BallManager::addBall(Ball(randomX, randomY, randomDX, randomDY));
     }
+
+    BallManager::addWall(Wall(-0.5f, -0.5f, -0.5f, 0.5f));
 
    
 

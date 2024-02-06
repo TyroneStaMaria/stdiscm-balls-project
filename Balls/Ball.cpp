@@ -28,3 +28,8 @@ void Ball::move() {
     if (y > 1.0 || y < -1.0) dy *= -1;
 
 }
+
+void Ball::invertDirection(bool collideX, bool collideY) {
+    if (collideX) dx *= -1;
+    if (collideY) dy *= -1;
+}
