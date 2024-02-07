@@ -1,7 +1,16 @@
 #include "Ball.h"
+#include <cmath>
 
-Ball::Ball(float startX, float startY, float startDx, float startDy) 
-    : x(startX), y(startY), dx(startDx), dy(startDy) {}
+
+
+Ball::Ball(float startX, float startY, float velocity, float startAngle)
+    : x(startX), y(startY), velocity(velocity), angle(startAngle) {
+
+
+        float angleRadians = startAngle * (PI / 180.0f);
+        dx = velocity * std::cos(angleRadians);
+        dy = velocity * std::sin(angleRadians);
+    }
 
 
 void Ball::draw() {
@@ -19,17 +28,53 @@ void Ball::draw() {
     glEnd();
 }
 
-void Ball::move() {
-    x += dx;
-    y += dy;
+void Ball::move(float deltaTime) {
+    // Predict the ball's next position based on its current velocity
+    x += dx * deltaTime;
+    y += dy * deltaTime;
+}
 
-    // Check for wall collisions and reverse velocity if necessary
-    if (x > 1.0 || x < -1.0) dx *= -1;
-    if (y > 1.0 || y < -1.0) dy *= -1;
+void Ball::checkCanvasCollision() {
+    // Check for collisions with the left or right edges of the canvas
+    if (x - radius < -1.0 || x + radius > 1.0) {
+        dx *= -1; // Invert the x-component of the velocity
+        if (x - radius < -1.0) {
+            x = -1.0 + radius; // Adjust position to avoid sticking to the edge
+        }
+        else {
+            x = 1.0 - radius;
+        }
+    }
 
+    // Check for collisions with the top or bottom edges of the canvas
+    if (y - radius < -1.0 || y + radius > 1.0) {
+        dy *= -1; // Invert the y-component of the velocity
+        if (y - radius < -1.0) {
+            y = -1.0 + radius; // Adjust position to avoid sticking to the edge
+        }
+        else {
+            y = 1.0 - radius;
+        }
+    }
+
+    // Normalize the velocity to ensure consistent speed
+    normalizeVelocity();
 }
 
 void Ball::invertDirection(bool collideX, bool collideY) {
-    if (collideX) dx *= -1;
-    if (collideY) dy *= -1;
+    if (collideX) {
+        dx *= -1; // Invert X direction
+    }
+    if (collideY) {
+        dy *= -1; // Invert Y direction
+    }
+    // Optionally, you can normalize dx and dy to ensure consistent speed
+    normalizeVelocity();
+}
+
+// Ensure dx and dy maintain the original speed after any adjustments
+void Ball::normalizeVelocity() {
+    float velocityMagnitude = std::sqrt(dx * dx + dy * dy);
+    dx = (dx / velocityMagnitude) * velocity;
+    dy = (dy / velocityMagnitude) * velocity;
 }

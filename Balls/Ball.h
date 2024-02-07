@@ -7,15 +7,19 @@ const double PI = std::numbers::pi;
 
 class Ball{
 public: 
-    Ball(float startX, float startY, float startDx, float startDy);
+    Ball(float startX, float startY, float velocity, float startAngle);
     void draw();
-    void move();
+    void move(float deltaTime);
     void invertDirection(bool collideX, bool collideY);
+    void normalizeVelocity();
+    void checkCanvasCollision();
     // position
     float x;
     float y;
 
-    // velocity 
+    float velocity;
+    float angle;
+
     float dx;
     float dy;
 

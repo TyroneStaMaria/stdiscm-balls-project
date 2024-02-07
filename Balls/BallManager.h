@@ -7,7 +7,7 @@ class BallManager{
 public:
     static void addBall(const Ball& ball);
     static void addWall(const Wall& wall);
-    static void updateBalls();
+    static void updateBalls(float deltaTime);
     static void drawBalls();
     static void drawWalls();
 

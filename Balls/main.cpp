@@ -10,9 +10,6 @@
 #include "BallManager.h"
 
 
-
-
-
 std::random_device rd;  // Obtain a random number from hardware
 std::mt19937 eng(rd()); // Seed the generator
 
@@ -23,6 +20,19 @@ std::uniform_real_distribution<> distrDY(-0.1, 0.1); // Define range for dy
 
 
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+const int MAX_WIDTH = 1920;
+const int MAX_HEIGHT = 1080;
+
+float ballX = 0.0f;
+float ballY = 0.0f;
+float ballAngle = 0.0f;
+float ballVelocity = 0.0f;
+
+float wallX1 = 0.0f;
+float wallY1 = 0.0f;
+float wallX2 = 0.0f;
+float wallY2 = 0.0f;
 
 void display() {
     // First, clear the entire window with the main background color
@@ -52,6 +62,8 @@ void display() {
 
     // Render the balls
     BallManager::drawBalls();
+    BallManager::drawWalls();
+
 
     // Reset the viewport to the full window size for UI rendering
     ImGuiIO& io = ImGui::GetIO();
@@ -61,14 +73,46 @@ void display() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
     ImGui::NewFrame();
+    {
+        
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
-    ImGui::Begin("Control Panel");
-    //ImGui::Text("Adjust settings and observe changes.");
-    ImGui::SetCursorPos(ImVec2(100, 100));
-    ImGui::PushItemWidth(200);
-    static int i1 = 123;
-    ImGui::InputInt("##", &i1);
-    ImGui::PopItemWidth();
+        int panelWidth = 500;
+        int panelHeight = 1080;
+
+        ImGui::SetNextWindowPos(ImVec2(MAX_WIDTH - panelWidth, 0)); // Position the window at the top-left corner
+        ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
+        ImGui::Begin("Control Panel");
+
+
+        ImGui::Text("Spawn Ball");
+        ImGui::InputFloat("x", &ballX);
+        ImGui::InputFloat("y", &ballY);
+        ImGui::InputFloat("Angle", &ballAngle);
+        ImGui::InputFloat("Velocity", &ballVelocity);
+        if (ImGui::Button("Spawn Ball"))
+        {
+            BallManager::addBall(Ball(ballX, ballY, ballVelocity, ballAngle));
+            
+        }
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        // Spawn Wall
+        ImGui::Text("Spawn Wall");
+        ImGui::InputFloat("x1", &wallX1);
+        ImGui::InputFloat("y1", &wallY1);
+        ImGui::InputFloat("x2", &wallX2);
+        ImGui::InputFloat("y2", &wallY2);
+        if (ImGui::Button("Spawn Wall"))
+        {
+            BallManager::addWall(Wall(wallX1, wallY1, wallX2, wallY2));
+
+        }
+        
+    }
 
     ImGui::End();
 
@@ -82,10 +126,19 @@ void display() {
 
 
 void update(int value) {
-    BallManager::updateBalls(); // Update all balls
+    static int lastTime = glutGet(GLUT_ELAPSED_TIME);
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+    float deltaTime = (currentTime - lastTime) / 1000.0f; // convert milliseconds to seconds
+    lastTime = currentTime;
+
+    BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
 
     glutPostRedisplay();
-    glutTimerFunc(16, update, 0); // Schedule the next update
+    glutTimerFunc(16, update, 0);
+    //BallManager::updateBalls(); // Update all balls
+
+    //glutPostRedisplay();
+    //glutTimerFunc(16, update, 0); // Schedule the next update
 }
 
 
@@ -96,7 +149,7 @@ int main(int argc, char** argv) {
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 #endif
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_MULTISAMPLE);
-    glutInitWindowSize(1920, 1080);
+    glutInitWindowSize(MAX_WIDTH, MAX_HEIGHT);
     glutCreateWindow("Dear ImGui GLUT+OpenGL2 Example");
 
     // Setup GLUT display function
@@ -124,17 +177,7 @@ int main(int argc, char** argv) {
     // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
     // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
     ImGui_ImplGLUT_InstallFuncs();
-
-    for (int i = 0; i < 2; i++) {
-        float randomX = distrX(eng);
-        float randomY = distrY(eng);
-        float randomDX = distrDX(eng);
-        float randomDY = distrDY(eng);
-
-        BallManager::addBall(Ball(randomX, randomY, randomDX, randomDY));
-    }
-    
-
+ 
     // Main loop
     glutMainLoop();
 
@@ -142,44 +185,6 @@ int main(int argc, char** argv) {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGLUT_Shutdown();
     ImGui::DestroyContext();
-
-
-    //glutInit(&argc, argv);
-    //glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    //glutInitWindowSize(1280, 720);
-    //glutCreateWindow("OpenGL Bouncing Ball with Class");
-
-    
-
-    //BallManager::addWall(Wall(-0.5f, -0.5f, -0.5f, 0.5f));
-
-
-    //glutDisplayFunc(display);
-    //glutTimerFunc(25, update, 0);
-
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    //gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
-
-    //// Setup Dear ImGui context
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    //// Setup Platform/Renderer backends
-    //ImGui_ImplGLUT_Init();
-    //ImGui_ImplOpenGL3_Init("#version 460");
-
-    //// Setup Dear ImGui style
-    //ImGui::StyleColorsDark();
-
-
-    //glutMainLoop();
-
-    //ImGui_ImplOpenGL3_Shutdown();
-    //ImGui_ImplGLUT_Shutdown();
-    //ImGui::DestroyContext();
-
 
     return 0;
 }

@@ -10,7 +10,7 @@ public:
     Wall(float x1, float y1, float x2, float y2) : x1(x1), y1(y1), x2(x2), y2(y2) {}
 
     void draw() const {
-        glColor3f(1.0, 1.0, 0.0);
+        glColor3f(1.0f, 1.0f, 0.0f);
         glLineWidth(2.0f);
         glBegin(GL_LINES);
         glVertex2f(x1, y1);
