@@ -24,6 +24,7 @@ static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 const int MAX_WIDTH = 1920;
 const int MAX_HEIGHT = 1080;
 
+int n = 0;
 float ballX = 0.0f;
 float ballY = 0.0f;
 float ballAngle = 0.0f;
@@ -90,17 +91,43 @@ void display() {
         ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
         ImGui::Begin("Control Panel");
 
+        static int currentForm = 1;
+
+        ImGui::RadioButton("1", &currentForm, 1);
+        ImGui::RadioButton("2", &currentForm, 2);
+        ImGui::RadioButton("3", &currentForm, 3);
 
         ImGui::Text("Spawn Ball");
+        ImGui::InputInt("n", &n);
         ImGui::InputFloat("x", &ballX);
         ImGui::InputFloat("y", &ballY);
-        ImGui::InputFloat("Angle", &ballAngle);
-        ImGui::InputFloat("Velocity", &ballVelocity);
+        switch (currentForm) {
+            case 1:
+                ImGui::InputFloat("Angle", &ballAngle);
+                ImGui::InputFloat("Velocity", &ballVelocity);
+                break;
+            case 2:
+                ImGui::InputFloat("Start Angle", &ballAngle);
+                ImGui::InputFloat("End Angle", &ballVelocity);
+                ImGui::InputFloat("Velocity", &ballVelocity);
+                break;
+            case 3:
+                ImGui::InputFloat("Angle", &ballAngle);
+                ImGui::InputFloat("Start Velocity", &ballAngle);
+                ImGui::InputFloat("End Velocity", &ballVelocity);
+                break;
+        }
+
+
         if (ImGui::Button("Spawn Ball"))
         {
-            BallManager::addBall(Ball(ballX, ballY, ballVelocity + i / 2, ballAngle + i / 2));
-            
+            std::cout << n << std::endl ;
+            for (int i = 0; i < n; i++) {
+                BallManager::addBall(Ball(ballX, ballY, ballVelocity, ballAngle));
+            }
         }
+
+        
 
         ImGui::Spacing();
         ImGui::Separator();
