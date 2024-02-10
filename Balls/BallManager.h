@@ -3,6 +3,8 @@
 #include "Wall.h"
 #include "Ball.h"
 
+using namespace std; 
+
 class BallManager{
 public:
     static void addBall(const Ball& ball);
@@ -10,9 +12,10 @@ public:
     static void updateBalls(float deltaTime);
     static void drawBalls();
     static void drawWalls();
+    static vector<Ball> getBalls();
 
 private:
-    static std::vector<Ball> balls;
-    static std::vector<Wall> walls;
+    static vector<Ball> balls;
+    static vector<Wall> walls;
 };
 
