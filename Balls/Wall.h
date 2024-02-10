@@ -2,19 +2,22 @@
 #pragma once
 
 #include <GL/glut.h>
+#include "Point.h"
+using namespace std; 
 
 class Wall {
 public:
-    float x1, y1, x2, y2; // Endpoints of the wall
+    Point point1;
+    Point point2;
 
-    Wall(float x1, float y1, float x2, float y2) : x1(x1), y1(y1), x2(x2), y2(y2) {}
+    Wall(Point point1, Point point2) : point1(point1), point2(point2) {}
 
     void draw() const {
         glColor3f(1.0f, 1.0f, 0.0f);
         glLineWidth(2.0f);
         glBegin(GL_LINES);
-        glVertex2f(x1, y1);
-        glVertex2f(x2, y2);
+        glVertex2f(point1.x, point1.y);
+        glVertex2f(point2.x, point2.y);
         glEnd();
     }
 };

@@ -8,16 +8,9 @@
 #include "imgui_impl_glut.h"
 #include "Ball.h"
 #include "BallManager.h"
+#include "Point.h"
 
-
-std::random_device rd;  // Obtain a random number from hardware
-std::mt19937 eng(rd()); // Seed the generator
-
-std::uniform_real_distribution<> distrX(-1.0, 1.0); // Define range for x
-std::uniform_real_distribution<> distrY(-1.0, 1.0); // Define range for y
-std::uniform_real_distribution<> distrDX(-0.1, 0.1); // Define range for dx
-std::uniform_real_distribution<> distrDY(-0.1, 0.1); // Define range for dy
-
+using namespace std;
 
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -25,16 +18,15 @@ const int MAX_WIDTH = 1920;
 const int MAX_HEIGHT = 1080;
 
 int n = 0;
-float ballX = 0.0f;
-float ballY = 0.0f;
-float ballAngle = 0.0f;
-float ballVelocity = 0.0f;
 
-float wallX1 = 0.0f;
-float wallY1 = 0.0f;
-float wallX2 = 0.0f;
-float wallY2 = 0.0f;
+Point startBall = {0, 0};
+Point endBall = { 0, 0 };
 
+pair<float, float> angle;
+pair<float, float> velocity;
+
+Point wallPoint1 = { 0, 0 };
+Point wallPoint2 = { 0, 0 };
 
 const int targetFPS = 60;
 const float targetFrameTime = 1.0f / targetFPS;
@@ -91,30 +83,46 @@ void display() {
         ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
         ImGui::Begin("Control Panel");
 
-        static int currentForm = 1;
+        static int currentForm = 0;
 
-        ImGui::RadioButton("1", &currentForm, 1);
-        ImGui::RadioButton("2", &currentForm, 2);
-        ImGui::RadioButton("3", &currentForm, 3);
+        ImGui::RadioButton("0", &currentForm, 0); ImGui::SameLine();
+        ImGui::RadioButton("1", &currentForm, 1); ImGui::SameLine();
+        ImGui::RadioButton("2", &currentForm, 2); ImGui::SameLine();
+        ImGui::RadioButton("3", &currentForm, 3); 
 
         ImGui::Text("Spawn Ball");
-        ImGui::InputInt("n", &n);
-        ImGui::InputFloat("x", &ballX);
-        ImGui::InputFloat("y", &ballY);
+        
         switch (currentForm) {
+            case 0:
+                ImGui::InputFloat("x", &startBall.x);
+                ImGui::InputFloat("y", &startBall.y);
+                ImGui::InputFloat("angle", &angle.first);
+                ImGui::InputFloat("velocity", &velocity.first);
+                break;
             case 1:
-                ImGui::InputFloat("Angle", &ballAngle);
-                ImGui::InputFloat("Velocity", &ballVelocity);
+                ImGui::InputInt("n", &n);
+                ImGui::InputFloat("start x", &startBall.x);
+                ImGui::InputFloat("start y", &startBall.y);
+                ImGui::InputFloat("end x", &endBall.x);
+                ImGui::InputFloat("end y", &endBall.y);
+                ImGui::InputFloat("angle", &angle.first);
+                ImGui::InputFloat("velocity", &angle.first);
                 break;
             case 2:
-                ImGui::InputFloat("Start Angle", &ballAngle);
-                ImGui::InputFloat("End Angle", &ballVelocity);
-                ImGui::InputFloat("Velocity", &ballVelocity);
+                ImGui::InputInt("n", &n);
+                ImGui::InputFloat("x", &startBall.x);
+                ImGui::InputFloat("y", &startBall.y);
+                ImGui::InputFloat("start angle", &angle.first);
+                ImGui::InputFloat("end angle", &angle.second);
+                ImGui::InputFloat("velocity", &velocity.first);
                 break;
             case 3:
-                ImGui::InputFloat("Angle", &ballAngle);
-                ImGui::InputFloat("Start Velocity", &ballAngle);
-                ImGui::InputFloat("End Velocity", &ballVelocity);
+                ImGui::InputInt("n", &n);
+                ImGui::InputFloat("x", &startBall.x);
+                ImGui::InputFloat("y", &startBall.y);
+                ImGui::InputFloat("angle", &angle.first);
+                ImGui::InputFloat("start velocity", &velocity.first);
+                ImGui::InputFloat("end velocity", &velocity.second);
                 break;
         }
 
@@ -123,7 +131,7 @@ void display() {
         {
             std::cout << n << std::endl ;
             for (int i = 0; i < n; i++) {
-                BallManager::addBall(Ball(ballX, ballY, ballVelocity, ballAngle));
+                BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
             }
         }
 
@@ -135,13 +143,14 @@ void display() {
 
         // Spawn Wall
         ImGui::Text("Spawn Wall");
-        ImGui::InputFloat("x1", &wallX1);
-        ImGui::InputFloat("y1", &wallY1);
-        ImGui::InputFloat("x2", &wallX2);
-        ImGui::InputFloat("y2", &wallY2);
+        ImGui::InputFloat("x1", &wallPoint1.x);
+        ImGui::InputFloat("y1", &wallPoint1.y);
+        ImGui::InputFloat("x2", &wallPoint2.x);
+        ImGui::InputFloat("y2", &wallPoint2.y);
         if (ImGui::Button("Spawn Wall"))
         {
-            BallManager::addWall(Wall(wallX1, wallY1, wallX2, wallY2));
+            cout << wallPoint1.x << " " << wallPoint1.y << endl;
+            BallManager::addWall(Wall(wallPoint1, wallPoint2));
 
         }
 
