@@ -98,9 +98,7 @@ void display() {
         ImGui::InputFloat("Velocity", &ballVelocity);
         if (ImGui::Button("Spawn Ball"))
         {
-            for (int i = 0; i < 100; i++) {
-                BallManager::addBall(Ball(ballX, ballY, ballVelocity + i / 2, ballAngle + i / 2));
-            }
+            BallManager::addBall(Ball(ballX, ballY, ballVelocity + i / 2, ballAngle + i / 2));
             
         }
 
