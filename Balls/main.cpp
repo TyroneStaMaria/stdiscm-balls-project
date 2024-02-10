@@ -34,6 +34,12 @@ float wallY1 = 0.0f;
 float wallX2 = 0.0f;
 float wallY2 = 0.0f;
 
+
+const int targetFPS = 60;
+const float targetFrameTime = 1.0f / targetFPS;
+float accumulator = 0.0f;
+
+
 void display() {
     // First, clear the entire window with the main background color
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
@@ -92,7 +98,7 @@ void display() {
         ImGui::InputFloat("Velocity", &ballVelocity);
         if (ImGui::Button("Spawn Ball"))
         {
-            BallManager::addBall(Ball(ballX, ballY, ballVelocity, ballAngle));
+            BallManager::addBall(Ball(ballX, ballY, ballVelocity + i / 2, ballAngle + i / 2));
             
         }
 
@@ -111,6 +117,14 @@ void display() {
             BallManager::addWall(Wall(wallX1, wallY1, wallX2, wallY2));
 
         }
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::Text("Number of balls: %d", BallManager::getBalls().size());
+
         
     }
 
@@ -131,10 +145,19 @@ void update(int value) {
     float deltaTime = (currentTime - lastTime) / 1000.0f; // convert milliseconds to seconds
     lastTime = currentTime;
 
-    BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
+
+    accumulator += deltaTime;
+
+    while (accumulator >= targetFrameTime) {
+        BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
+        accumulator -= targetFrameTime;
+
+    }
+
+
 
     glutPostRedisplay();
-    glutTimerFunc(16, update, 0);
+    glutTimerFunc(1, update, 0);
     //BallManager::updateBalls(); // Update all balls
 
     //glutPostRedisplay();
@@ -150,13 +173,13 @@ int main(int argc, char** argv) {
 #endif
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_MULTISAMPLE);
     glutInitWindowSize(MAX_WIDTH, MAX_HEIGHT);
-    glutCreateWindow("Dear ImGui GLUT+OpenGL2 Example");
+    glutCreateWindow("Bouncing balls");
 
     // Setup GLUT display function
     // We will also call ImGui_ImplGLUT_InstallFuncs() to get all the other functions installed for us,
     // otherwise it is possible to install our own functions and call the imgui_impl_glut.h functions ourselves.
     glutDisplayFunc(display);
-    glutTimerFunc(16, update, 0);
+    glutTimerFunc(1, update, 0);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
