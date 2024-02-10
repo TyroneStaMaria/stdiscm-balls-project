@@ -1,5 +1,6 @@
 #include "BallManager.h"
 #include "Wall.h"
+#include "Ball.h"
 
 #include <thread>
 #include <mutex>
@@ -13,6 +14,25 @@ vector<Wall> BallManager::walls;
 
 void BallManager::addBall(const Ball& ball) {
     balls.push_back(ball);
+}
+
+void BallManager::addBallsDistance(int n, Point start, Point end, float velocity, float angle) {
+
+    float distanceX = end.x - start.x;
+    float distanceY = end.y - start.y;
+    float totalDistance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+
+    float spacing = totalDistance / (n - 1);
+
+    float dirX = distanceX / totalDistance;
+    float dirY = distanceY / totalDistance;
+
+    for (int i = 0; i < n; i++) {
+        float posX = start.x+ dirX * spacing * i;
+        float posY = start.y + dirY * spacing * i;
+
+        BallManager::addBall(Ball(posX, posY, velocity, angle));
+    }
 }
 
 void BallManager::updateBalls(float deltaTime) {

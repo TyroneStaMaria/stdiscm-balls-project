@@ -12,6 +12,7 @@ public:
     static void updateBalls(float deltaTime);
     static void drawBalls();
     static void drawWalls();
+    static void addBallsDistance(int n, Point start, Point end, float velocity, float angle);
     static vector<Ball> getBalls();
 
 private:

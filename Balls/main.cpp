@@ -98,6 +98,10 @@ void display() {
                 ImGui::InputFloat("y", &startBall.y);
                 ImGui::InputFloat("angle", &angle.first);
                 ImGui::InputFloat("velocity", &velocity.first);
+                if (ImGui::Button("Spawn Ball"))
+                {
+                    BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
+                }
                 break;
             case 1:
                 ImGui::InputInt("n", &n);
@@ -106,7 +110,11 @@ void display() {
                 ImGui::InputFloat("end x", &endBall.x);
                 ImGui::InputFloat("end y", &endBall.y);
                 ImGui::InputFloat("angle", &angle.first);
-                ImGui::InputFloat("velocity", &angle.first);
+                ImGui::InputFloat("velocity", &velocity.first);
+                if (ImGui::Button("Spawn Ball"))
+                {
+                    BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
+                }
                 break;
             case 2:
                 ImGui::InputInt("n", &n);
@@ -127,16 +135,6 @@ void display() {
         }
 
 
-        if (ImGui::Button("Spawn Ball"))
-        {
-            std::cout << n << std::endl ;
-            for (int i = 0; i < n; i++) {
-                BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
-            }
-        }
-
-        
-
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
@@ -149,7 +147,6 @@ void display() {
         ImGui::InputFloat("y2", &wallPoint2.y);
         if (ImGui::Button("Spawn Wall"))
         {
-            cout << wallPoint1.x << " " << wallPoint1.y << endl;
             BallManager::addWall(Wall(wallPoint1, wallPoint2));
 
         }
