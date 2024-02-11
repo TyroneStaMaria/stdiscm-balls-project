@@ -10,7 +10,7 @@ public:
     Ball(float startX, float startY, float velocity, float startAngle);
     void draw();
     void move(float deltaTime);
-    void invertDirection(bool collideX, bool collideY);
+    void invertDirection();
     void normalizeVelocity();
     void checkCanvasCollision();
     // position

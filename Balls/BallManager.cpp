@@ -44,41 +44,27 @@ void BallManager::updateBalls(float deltaTime) {
     auto updateRange = [](int start, int end, float deltaTime) {
         for (int i = start; i < end; i++) {
             // Calculate the ball's next position based on its current velocity components
+            bool collision = false;
             float nextX = balls[i].x + balls[i].dx * deltaTime;
             float nextY = balls[i].y + balls[i].dy * deltaTime;
             balls[i].checkCanvasCollision();
 
 
             for (const auto& wall : walls) {
-                bool collideX = false, collideY = false;
 
-                // Adjusted collision detection for vertical walls
-                
-                if (wall.point1.x == wall.point2.x && nextX - balls[i].radius <= wall.point1.x && nextX + balls[i].radius >= wall.point1.x &&
-                    balls[i].y >= std::min(wall.point1.y, wall.point2.y) && balls[i].y <= std::max(wall.point1.y, wall.point2.y)) {
-                    collideX = true;
+                float temp = (balls[i].x - nextX) * (wall.point1.y - wall.point2.y) - (balls[i].y - nextY) * (wall.point1.x - wall.point2.x);
+
+                if (temp != 0)
+                {
+                    double t = ((balls[i].x - wall.point1.x) * (wall.point1.y - wall.point2.y) - (balls[i].y - wall.point1.y) * (wall.point1.x - wall.point2.x)) / temp;
+                    double u = -((balls[i].x - nextX) * (balls[i].y - wall.point1.y) - (balls[i].y - nextY) * (balls[i].x - wall.point1.x)) / temp;
+
+                    collision = t >= 0 && t <= 1 && u >= 0 && u <= 1;
                 }
 
-                // Adjusted collision detection for horizontal walls
-                if (wall.point1.y == wall.point2.y && nextY - balls[i].radius <= wall.point1.y && nextY + balls[i].radius >= wall.point1.y &&
-                    balls[i].x >= std::min(wall.point1.x, wall.point2.x) && balls[i].x <= std::max(wall.point1.x, wall.point2.x)) {
-                    collideY = true;
-                }
-
-                //if (wall.x1 == wall.x2 && nextX - balls[i].radius <= wall.x1 && nextX + balls[i].radius >= wall.x1 &&
-                //    balls[i].y >= std::min(wall.y1, wall.y2) && balls[i].y <= std::max(wall.y1, wall.y2)) {
-                //    collideX = true;
-                //}
-
-                //// Adjusted collision detection for horizontal walls
-                //if (wall.y1 == wall.y2 && nextY - balls[i].radius <= wall.y1 && nextY + balls[i].radius >= wall.y1 &&
-                //    balls[i].x >= std::min(wall.x1, wall.x2) && balls[i].x <= std::max(wall.x1, wall.x2)) {
-                //    collideY = true;
-                //}
-
-                // Invert direction based on collision detection
-                if (collideX || collideY) {
-                    balls[i].invertDirection(collideX, collideY);
+                if (collision) {
+                    // Invert direction only if collision is detected
+                    balls[i].invertDirection();
                 }
             }
 

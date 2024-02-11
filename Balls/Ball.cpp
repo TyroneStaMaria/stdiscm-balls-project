@@ -61,13 +61,9 @@ void Ball::checkCanvasCollision() {
     normalizeVelocity();
 }
 
-void Ball::invertDirection(bool collideX, bool collideY) {
-    if (collideX) {
-        dx *= -1; // Invert X direction
-    }
-    if (collideY) {
-        dy *= -1; // Invert Y direction
-    }
+void Ball::invertDirection() {
+    dx *= -1;
+    dy *= -1;
     // Optionally, you can normalize dx and dy to ensure consistent speed
     normalizeVelocity();
 }
