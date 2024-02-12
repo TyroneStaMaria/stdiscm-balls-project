@@ -14,6 +14,7 @@ public:
     static void drawWalls();
     static void addBallsDistance(int n, Point start, Point end, float velocity, float angle);
     static void addBallsAngle(int n, Point start, float velocity, float startAngle, float endAngle);
+    static void addBallsVelocity(int n, Point position, float startVelocity, float endVelocity, float angle);
     static vector<Ball> getBalls();
 
 private:

@@ -135,6 +135,10 @@ void display() {
                 ImGui::InputFloat("angle", &angle.first);
                 ImGui::InputFloat("start velocity", &velocity.first);
                 ImGui::InputFloat("end velocity", &velocity.second);
+                if (ImGui::Button("Spawn Ball"))
+                {
+                    BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
+                }
                 break;
         }
 

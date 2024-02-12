@@ -46,6 +46,17 @@ void BallManager::addBallsAngle(int n, Point position, float velocity, float sta
     }
 }
 
+void BallManager::addBallsVelocity(int n, Point position, float startVelocity, float endVelocity, float angle) {
+
+    float velocityIncrement = (n > 1) ? (endVelocity - startVelocity) / (n - 1) : 0;
+
+    for (int i = 0; i < n; i++) {
+        float currentVelocity = startVelocity + velocityIncrement * i;
+
+        BallManager::addBall(Ball(position.x, position.y, currentVelocity, angle));
+    }
+}
+
 void BallManager::updateBalls(float deltaTime) {
 
     const size_t numThreads = thread::hardware_concurrency();
