@@ -13,6 +13,7 @@ public:
     static void drawBalls();
     static void drawWalls();
     static void addBallsDistance(int n, Point start, Point end, float velocity, float angle);
+    static void addBallsAngle(int n, Point start, float velocity, float startAngle, float endAngle);
     static vector<Ball> getBalls();
 
 private:
