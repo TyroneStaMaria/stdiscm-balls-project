@@ -14,7 +14,7 @@ Ball::Ball(float startX, float startY, float velocity, float startAngle)
 
 
 void Ball::draw() {
-    float radius = 0.01f;
+    float radius = 10.0f;
     glBegin(GL_TRIANGLE_FAN);
     glColor3f(1.0, 0.0, 0.0); // Red color
     glVertex2f(x, y); // Center of circle
@@ -35,40 +35,40 @@ void Ball::move(float deltaTime) {
 }
 
 void Ball::checkCanvasCollision() {
-    // Check for collisions with the left or right edges of the canvas
-    if (x - radius < -1.0 || x + radius > 1.0) {
-        dx *= -1; // Invert the x-component of the velocity
-        if (x - radius < -1.0) {
-            x = -1.0 + radius; // Adjust position to avoid sticking to the edge
+    float radiusThreshold = 10.0f; 
+    float leftBoundary = 0 + radiusThreshold;
+    float rightBoundary = 1280 - radiusThreshold;
+    float bottomBoundary = 0 + radiusThreshold;
+    float topBoundary = 720 - radiusThreshold;
+
+    if (x < leftBoundary || x > rightBoundary) {
+        dx *= -1; 
+        if (x < leftBoundary) {
+            x = leftBoundary;
         }
         else {
-            x = 1.0 - radius;
+            x = rightBoundary;
         }
     }
 
-    // Check for collisions with the top or bottom edges of the canvas
-    if (y - radius < -1.0 || y + radius > 1.0) {
-        dy *= -1; // Invert the y-component of the velocity
-        if (y - radius < -1.0) {
-            y = -1.0 + radius; // Adjust position to avoid sticking to the edge
+    if (y < bottomBoundary || y > topBoundary) {
+        dy *= -1; 
+        if (y < bottomBoundary) {
+            y = bottomBoundary; 
         }
         else {
-            y = 1.0 - radius;
+            y = topBoundary;
         }
     }
-
-    // Normalize the velocity to ensure consistent speed
     normalizeVelocity();
 }
 
 void Ball::invertDirection() {
     dx *= -1;
     dy *= -1;
-    // Optionally, you can normalize dx and dy to ensure consistent speed
     normalizeVelocity();
 }
 
-// Ensure dx and dy maintain the original speed after any adjustments
 void Ball::normalizeVelocity() {
     float velocityMagnitude = std::sqrt(dx * dx + dy * dy);
     dx = (dx / velocityMagnitude) * velocity;

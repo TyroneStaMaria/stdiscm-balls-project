@@ -40,28 +40,37 @@ void display() {
 
     // Define the viewport and scissor box for the balls section
     GLint ballsViewportX = 0; // Starting X position
-    GLint ballsViewportY = 350; // Starting Y position
+    GLint ballsViewportY = 360; // Starting Y position
     GLsizei ballsViewportWidth = 1280; // Width of the section
     GLsizei ballsViewportHeight = 720; // Height of the section
 
     // Enable scissor test and set the scissor box
     glEnable(GL_SCISSOR_TEST);
     glScissor(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
+    glViewport(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
 
     // Clear the balls section with a different background color
     ImVec4 ballsBgColor = ImVec4(0.2f, 0.3f, 0.4f, 1.0f); // Example: dark blue background for balls section
     glClearColor(ballsBgColor.x, ballsBgColor.y, ballsBgColor.z, ballsBgColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, ballsViewportWidth, 0, ballsViewportHeight); // Set coordinate system with (0,0) at bottom left
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    BallManager::drawBalls();
+    BallManager::drawWalls();
+
     // Disable the scissor test to not affect subsequent rendering
     glDisable(GL_SCISSOR_TEST);
 
     // Set the viewport for rendering the balls (if different from scissor box)
-    glViewport(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
 
     // Render the balls
-    BallManager::drawBalls();
-    BallManager::drawWalls();
+    
 
 
     // Reset the viewport to the full window size for UI rendering
