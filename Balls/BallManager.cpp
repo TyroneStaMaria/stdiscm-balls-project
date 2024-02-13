@@ -16,42 +16,47 @@ void BallManager::addBall(const Ball& ball) {
     balls.push_back(ball);
 }
 
-void BallManager::addBallsDistance(int n, Point start, Point end, float velocity, float angle) {
+void BallManager::addBallsDistance(int n, Point start, Point end, float velocity, float angle, int startSpawn, int endSpawn) {
 
     float distanceX = end.x - start.x;
     float distanceY = end.y - start.y;
     float totalDistance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
-    float ballRadius = 10.0f;
+    float ballRadius = 5.0f;
 
-    float spacing = totalDistance / (n - 1) + (ballRadius * 2);
+    float spacing = totalDistance / (n - 1) + (ballRadius * 4);
 
     float dirX = distanceX / totalDistance;
     float dirY = distanceY / totalDistance;
 
-    for (int i = 0; i < n; i++) {
-        float posX = start.x+ dirX * spacing * i;
+    for (int i = startSpawn; i < endSpawn; i++) {
+        float posX = start.x + dirX * spacing * i;
         float posY = start.y + dirY * spacing * i;
 
         BallManager::addBall(Ball(posX, posY, velocity, angle));
     }
 }
 
-void BallManager::addBallsAngle(int n, Point position, float velocity, float startAngle, float endAngle) {
+void BallManager::addBallsAngle(int n, Point position, float velocity, float startAngle, float endAngle, int startSpawn, int endSpawn) {
 
-    float angleIncrement = (n > 1) ? (endAngle - startAngle) / (n - 1) : 0;
+    float ballRadius = 5.0f;
 
-    for (int i = 0; i < n; i++) {
+    float angleIncrement = (n > 1) ? (endAngle - startAngle) / (n - 1) + (ballRadius * 4) : 0;
+
+
+    for (int i = startSpawn; i < endSpawn; i++) {
         float angleDegrees = startAngle + angleIncrement * i;
 
         BallManager::addBall(Ball(position.x, position.y, velocity, angleDegrees));
     }
 }
 
-void BallManager::addBallsVelocity(int n, Point position, float startVelocity, float endVelocity, float angle) {
+void BallManager::addBallsVelocity(int n, Point position, float startVelocity, float endVelocity, float angle, int startSpawn, int endSpawn) {
 
-    float velocityIncrement = (n > 1) ? (endVelocity - startVelocity) / (n - 1) : 0;
+    float ballRadius = 5.0f;
 
-    for (int i = 0; i < n; i++) {
+    float velocityIncrement = (n > 1) ? (endVelocity - startVelocity) / (n - 1) + (ballRadius * 4) : 0;
+
+    for (int i = startSpawn; i < endSpawn; i++) {
         float currentVelocity = startVelocity + velocityIncrement * i;
 
         BallManager::addBall(Ball(position.x, position.y, currentVelocity, angle));

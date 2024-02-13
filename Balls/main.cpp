@@ -17,8 +17,13 @@ static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 const int MAX_WIDTH = 1920;
 const int MAX_HEIGHT = 1080;
+const int MAX_BATCH = 100;
 
 int n = 0;
+
+int batch = 0;
+int ballsSpawned = 0;
+int currBatch = 0;
 
 Point startBall = {0, 0};
 Point endBall = { 0, 0 };
@@ -32,6 +37,9 @@ Point wallPoint2 = { 0, 0 };
 const int targetFPS = 60;
 const float targetFrameTime = 1.0f / targetFPS;
 float accumulator = 0.0f;
+static int currentForm = 0;
+
+bool spawning = false;
 
 int frameCount = 0;
 float lastFrameRateCalculationTime = 0.0f;
@@ -136,20 +144,27 @@ void display() {
         ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
         ImGui::Begin("Control Panel");
 
-        static int currentForm = 0;
         const char* options[] = {"0", "1", "2", "3"};
 
         for (int i = 0; i < IM_ARRAYSIZE(options); i++) {
-            
-            if (ImGui::RadioButton(options[i], &currentForm, i)) {
-                n = 0;
 
-                startBall = { 0, 0 };
-                endBall = { 0, 0 };
+            if (spawning) {
+                ImGui::BeginDisabled();
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                ImGui::RadioButton(options[i], &currentForm, i); 
+                ImGui::PopStyleVar();
+                ImGui::EndDisabled();
+            } else {
+                if (ImGui::RadioButton(options[i], &currentForm, i)) {
+                    n = 0;
 
-                angle = { 0, 0 };
-                velocity = { 0, 0 };
+                    startBall = { 0, 0 };
+                    endBall = { 0, 0 };
 
+                    angle = { 0, 0 };
+                    velocity = { 0, 0 };
+
+                }
             }
 
             if (i < IM_ARRAYSIZE(options) - 1) {
@@ -180,10 +195,12 @@ void display() {
                 sliderFloat("end y", &endBall.y, ballsViewportHeight);
                 sliderFloat("angle", &angle.first, 360.0f);
                 sliderFloat("velocity", &velocity.first, 2000.0f);
-
-                if (ImGui::Button("Spawn Ball"))
+                //spawning = ImGui::Button("Spawn Ball");
+                if (ImGui::Button("Spawn Ball") && !spawning)
                 {
-                    BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
+                    spawning = true;
+                    ballsSpawned = 0;
+                    //BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
                 }
                 break;
             case 2:
@@ -194,10 +211,13 @@ void display() {
                 sliderFloat("start angle", &angle.first, 360.0f);
                 sliderFloat("end angle", &angle.second, 360.0f);
                 sliderFloat("velocity", &velocity.first, 2000.0f);
+                //spawning = ImGui::Button("Spawn Ball");
 
                 if (ImGui::Button("Spawn Ball"))
                 {
-                    BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
+                    spawning = true;
+                    ballsSpawned = 0;
+                    //BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
                 }
                 break;
             case 3:
@@ -208,10 +228,13 @@ void display() {
                 sliderFloat("angle", &angle.first, 360.0f);
                 sliderFloat("start velocity", &velocity.first, 2000.0f);
                 sliderFloat("end velocity", &velocity.second, 2000.0f);
+                //spawning = ImGui::Button("Spawn Ball");
 
                 if (ImGui::Button("Spawn Ball"))
-                {
-                    BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
+                {   
+                    spawning = true;
+                    ballsSpawned = 0;
+                    //BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
                 }
                 break;
         }
@@ -265,9 +288,30 @@ void update(int value) {
 
     accumulator += deltaTime;
 
-    while (accumulator >= targetFrameTime) {
-        BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
-        accumulator -= targetFrameTime;
+    if (spawning && ballsSpawned == n ) {
+        spawning = false;
+        ballsSpawned = 0;
+        currBatch = 0;
+    }
+
+    if (spawning && ballsSpawned < n) {
+        int toSpawn = std::min(n - ballsSpawned, MAX_BATCH);
+        currBatch += toSpawn;
+        switch (currentForm) {
+        case 1:
+            BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first, ballsSpawned, currBatch);
+            break;
+        case 2:
+           
+            BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second, ballsSpawned, currBatch);
+            break;
+        case 3:
+            
+            BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first, ballsSpawned, currBatch);
+            break;
+
+        }
+        ballsSpawned += toSpawn;
 
     }
 
@@ -281,7 +325,7 @@ void update(int value) {
     }
 
     glutPostRedisplay();
-    glutTimerFunc(16, update, 0);
+    glutTimerFunc(1, update, 0);
 }
 
 
@@ -296,7 +340,7 @@ int main(int argc, char** argv) {
     glutCreateWindow("Bouncing balls");
 
     glutDisplayFunc(display);
-    glutTimerFunc(16, update, 0);
+    glutTimerFunc(1, update, 0);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();

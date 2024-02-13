@@ -23,7 +23,7 @@ public:
     float dx;
     float dy;
 
-    float radius = 0.01f;
+    float radius = 5.0f;
 
 };
 

@@ -14,7 +14,6 @@ Ball::Ball(float startX, float startY, float velocity, float startAngle)
 
 
 void Ball::draw() {
-    float radius = 10.0f;
     glBegin(GL_TRIANGLE_FAN);
     glColor3ub(227, 151, 116);
     glVertex2f(x, y); // Center of circle
@@ -35,7 +34,7 @@ void Ball::move(float deltaTime) {
 }
 
 void Ball::checkCanvasCollision() {
-    float radiusThreshold = 10.0f; 
+    float radiusThreshold = radius; 
     float leftBoundary = 0 + radiusThreshold;
     float rightBoundary = 1280 - radiusThreshold;
     float bottomBoundary = 0 + radiusThreshold;
