@@ -51,8 +51,29 @@ static void sliderFloat(string label, float* var, float maxValue) {
     ImGui::SetNextItemWidth(400.0f);
     ImGui::SliderFloat(sliderId.c_str(), var, 0.0f, maxValue, " ");
     
-    // Ensure the value stays within desired bounds, if necessary
     *var = clamp(*var, 0.0f, maxValue);
+
+    ImGui::Spacing();
+}
+
+static void sliderInt(string label, int* var, int maxValue) {
+    ImGui::Text(label.c_str());
+    ImGui::Separator();
+
+    ImGui::SetNextItemWidth(150.0f);
+
+    string inputId = "##input" + label;
+    string sliderId = "##slider" + label;
+
+
+    ImGui::InputInt(inputId.c_str(), var, 0.0f, 0.0f);
+    ImGui::SameLine();
+
+
+    ImGui::SetNextItemWidth(400.0f);
+    ImGui::SliderInt(sliderId.c_str(), var, 0.0f, maxValue, " ");
+
+    *var = clamp(*var, 0, maxValue);
 
     ImGui::Spacing();
 }
@@ -63,18 +84,16 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Define the viewport and scissor box for the balls section
-    GLint ballsViewportX = 0; // Starting X position
-    GLint ballsViewportY = 360; // Starting Y position
-    GLsizei ballsViewportWidth = 1280; // Width of the section
-    GLsizei ballsViewportHeight = 720; // Height of the section
+    GLint ballsViewportX = 0; 
+    GLint ballsViewportY = 360; 
+    GLsizei ballsViewportWidth = 1280;
+    GLsizei ballsViewportHeight = 720;
 
-    // Enable scissor test and set the scissor box
     glEnable(GL_SCISSOR_TEST);
     glScissor(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
     glViewport(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
 
-    // Clear the balls section with a different background color
-    ImVec4 ballsBgColor = ImVec4(0.2f, 0.3f, 0.4f, 1.0f); // Example: dark blue background for balls section
+    ImVec4 ballsBgColor = ImVec4(0.2f, 0.3f, 0.4f, 1.0f); 
     glClearColor(ballsBgColor.x, ballsBgColor.y, ballsBgColor.z, ballsBgColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -90,12 +109,6 @@ void display() {
 
     // Disable the scissor test to not affect subsequent rendering
     glDisable(GL_SCISSOR_TEST);
-
-    // Set the viewport for rendering the balls (if different from scissor box)
-
-    // Render the balls
-    
-
 
     // Reset the viewport to the full window size for UI rendering
     ImGuiIO& io = ImGui::GetIO();
@@ -120,11 +133,26 @@ void display() {
         ImGui::Begin("Control Panel");
 
         static int currentForm = 0;
+        const char* options[] = {"0", "1", "2", "3"};
 
-        ImGui::RadioButton("0", &currentForm, 0); ImGui::SameLine();
-        ImGui::RadioButton("1", &currentForm, 1); ImGui::SameLine();
-        ImGui::RadioButton("2", &currentForm, 2); ImGui::SameLine();
-        ImGui::RadioButton("3", &currentForm, 3); 
+        for (int i = 0; i < IM_ARRAYSIZE(options); i++) {
+            
+            if (ImGui::RadioButton(options[i], &currentForm, i)) {
+                n = 0;
+
+                startBall = { 0, 0 };
+                endBall = { 0, 0 };
+
+                angle = { 0, 0 };
+                velocity = { 0, 0 };
+
+            }
+
+            if (i < IM_ARRAYSIZE(options) - 1) {
+                ImGui::SameLine();
+            }
+        }
+
 
         ImGui::Text("Spawn Ball");
 
@@ -140,7 +168,7 @@ void display() {
                 }
                 break;
             case 1:
-                ImGui::InputInt("n", &n);
+                sliderInt("n", &n, 10000);
 
                 sliderFloat("start x", &startBall.x, ballsViewportWidth);
                 sliderFloat("start y", &startBall.y, ballsViewportHeight);
@@ -155,7 +183,7 @@ void display() {
                 }
                 break;
             case 2:
-                ImGui::InputInt("n", &n);
+                sliderInt("n", &n, 10000);
                 
                 sliderFloat("x", &startBall.x, ballsViewportWidth);
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
@@ -169,7 +197,7 @@ void display() {
                 }
                 break;
             case 3:
-                ImGui::InputInt("n", &n);
+                sliderInt("n", &n, 10000);
 
                 sliderFloat("x", &startBall.x, ballsViewportWidth);
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
@@ -241,10 +269,6 @@ void update(int value) {
 
     glutPostRedisplay();
     glutTimerFunc(16, update, 0);
-    //BallManager::updateBalls(); // Update all balls
-
-    //glutPostRedisplay();
-    //glutTimerFunc(16, update, 0); // Schedule the next update
 }
 
 
@@ -258,9 +282,6 @@ int main(int argc, char** argv) {
     glutInitWindowSize(MAX_WIDTH, MAX_HEIGHT);
     glutCreateWindow("Bouncing balls");
 
-    // Setup GLUT display function
-    // We will also call ImGui_ImplGLUT_InstallFuncs() to get all the other functions installed for us,
-    // otherwise it is possible to install our own functions and call the imgui_impl_glut.h functions ourselves.
     glutDisplayFunc(display);
     glutTimerFunc(16, update, 0);
 
@@ -277,11 +298,6 @@ int main(int argc, char** argv) {
     ImGui_ImplGLUT_Init();
     ImGui_ImplOpenGL3_Init();
 
-    // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
-    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
     ImGui_ImplGLUT_InstallFuncs();
  
     // Main loop
