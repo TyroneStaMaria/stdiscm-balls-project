@@ -323,6 +323,12 @@ void update(int value) {
         frameCount = 0;
         lastFrameRateCalculationTime = currentTime / 1000.0f;
     }
+    
+
+    while (accumulator >= targetFrameTime) {
+        BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
+        accumulator -= targetFrameTime;
+    }
 
     glutPostRedisplay();
     glutTimerFunc(1, update, 0);
