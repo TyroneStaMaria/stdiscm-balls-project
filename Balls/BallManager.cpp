@@ -21,8 +21,9 @@ void BallManager::addBallsDistance(int n, Point start, Point end, float velocity
     float distanceX = end.x - start.x;
     float distanceY = end.y - start.y;
     float totalDistance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+    float ballRadius = 10.0f;
 
-    float spacing = totalDistance / (n - 1);
+    float spacing = totalDistance / (n - 1) + (ballRadius * 2);
 
     float dirX = distanceX / totalDistance;
     float dirY = distanceY / totalDistance;

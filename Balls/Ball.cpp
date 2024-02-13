@@ -16,7 +16,7 @@ Ball::Ball(float startX, float startY, float velocity, float startAngle)
 void Ball::draw() {
     float radius = 10.0f;
     glBegin(GL_TRIANGLE_FAN);
-    glColor3f(1.0, 0.0, 0.0); // Red color
+    glColor3ub(227, 151, 116);
     glVertex2f(x, y); // Center of circle
     for (int i = 0; i <= 20; i++) {
         float angle = 2.0f * PI * float(i) / float(20);  // Calculate the angle
