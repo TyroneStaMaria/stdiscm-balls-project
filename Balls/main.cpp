@@ -33,6 +33,10 @@ const int targetFPS = 60;
 const float targetFrameTime = 1.0f / targetFPS;
 float accumulator = 0.0f;
 
+int frameCount = 0;
+float lastFrameRateCalculationTime = 0.0f;
+float calculatedFrameRate = 0.0f;
+
 static void sliderFloat(string label, float* var, float maxValue) {
     
     ImGui::Text(label.c_str());
@@ -233,7 +237,7 @@ void display() {
         ImGui::Separator();
         ImGui::Spacing();
 
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / calculatedFrameRate, calculatedFrameRate);
         ImGui::Text("Number of balls: %d", BallManager::getBalls().size());
         ImGui::GetFont()->Scale = oldSize;
         ImGui::PopFont();
@@ -265,6 +269,15 @@ void update(int value) {
         BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
         accumulator -= targetFrameTime;
 
+    }
+
+    // Frame rate calculation
+    frameCount++;
+    float timeSinceLastCalculation = currentTime / 1000.0f - lastFrameRateCalculationTime; // Also in seconds
+    if (timeSinceLastCalculation >= 0.5f) { // Every 0.5 seconds
+        calculatedFrameRate = frameCount / timeSinceLastCalculation;
+        frameCount = 0;
+        lastFrameRateCalculationTime = currentTime / 1000.0f;
     }
 
     glutPostRedisplay();
