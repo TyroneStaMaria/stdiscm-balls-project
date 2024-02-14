@@ -1,3 +1,38 @@
+# Balls is life
+
+STDISCM Problem Set # 1
+
+Authors: Faith Griffin and Tyrone Sta. Maria
+
+## Prerequisites
+
+- TODO: ayusin to
+- opengl
+- freeglut
+
+## Step 1: Clone the Repository
+
+`git clone https://github.com/TyroneStaMaria/stdiscm-balls-project.git`
+
+or download as zip
+
+## Step 2: Open the Project
+
+1. Navigate to the `Balls/` directory
+2. Open `Balls.sln`
+
+OR
+
+1. Open with visual studio TODO: add more steps here
+
+## Step 3: Build and Run
+
+1. Ctrl + F5 TODO: add steps to build
+
+## How to use the program
+
+TODO: link to the demo video
+
 ## Setup and Installation
 
 1. Download freeglut 3.0.0 MSVC Package https://www.transmissionzero.co.uk/software/freeglut-devel/
