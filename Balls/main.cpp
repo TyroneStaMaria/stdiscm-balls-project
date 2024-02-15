@@ -45,7 +45,7 @@ int frameCount = 0;
 float lastFrameRateCalculationTime = 0.0f;
 float calculatedFrameRate = 0.0f;
 
-static void sliderFloat(string label, float* var, float maxValue) {
+static void sliderFloat(string label, float* var, float maxValue, float minValue = 0.0f) {
     
     ImGui::Text(label.c_str());
     ImGui::Separator();
@@ -61,9 +61,9 @@ static void sliderFloat(string label, float* var, float maxValue) {
     
     
     ImGui::SetNextItemWidth(400.0f);
-    ImGui::SliderFloat(sliderId.c_str(), var, 0.0f, maxValue, " ");
+    ImGui::SliderFloat(sliderId.c_str(), var, minValue, maxValue, " ");
     
-    *var = clamp(*var, 0.0f, maxValue);
+    *var = clamp(*var, minValue, maxValue);
 
     ImGui::Spacing();
 }
@@ -180,7 +180,7 @@ void display() {
                 sliderFloat("x", &startBall.x, ballsViewportWidth);
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
                 sliderFloat("angle", &angle.first, 360.0f);
-                sliderFloat("velocity", &velocity.first, 2000.0f);
+                sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
                 if (ImGui::Button("Spawn Ball"))
                 {
                     BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
@@ -194,7 +194,7 @@ void display() {
                 sliderFloat("end x", &endBall.x, ballsViewportWidth);
                 sliderFloat("end y", &endBall.y, ballsViewportHeight);
                 sliderFloat("angle", &angle.first, 360.0f);
-                sliderFloat("velocity", &velocity.first, 2000.0f);
+                sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
                 //spawning = ImGui::Button("Spawn Ball");
                 if (ImGui::Button("Spawn Ball") && !spawning)
                 {
@@ -210,7 +210,7 @@ void display() {
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
                 sliderFloat("start angle", &angle.first, 360.0f);
                 sliderFloat("end angle", &angle.second, 360.0f);
-                sliderFloat("velocity", &velocity.first, 2000.0f);
+                sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
                 //spawning = ImGui::Button("Spawn Ball");
 
                 if (ImGui::Button("Spawn Ball"))
@@ -227,7 +227,7 @@ void display() {
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
                 sliderFloat("angle", &angle.first, 360.0f);
                 sliderFloat("start velocity", &velocity.first, 2000.0f);
-                sliderFloat("end velocity", &velocity.second, 2000.0f);
+                sliderFloat("end velocity", &velocity.second, 2000.0f, 300.0f);
                 //spawning = ImGui::Button("Spawn Ball");
 
                 if (ImGui::Button("Spawn Ball"))
