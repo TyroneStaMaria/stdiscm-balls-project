@@ -52,9 +52,7 @@ void BallManager::addBallsAngle(int n, Point position, float velocity, float sta
 
 void BallManager::addBallsVelocity(int n, Point position, float startVelocity, float endVelocity, float angle, int startSpawn, int endSpawn) {
 
-    float ballRadius = 5.0f;
-
-    float velocityIncrement = (n > 1) ? (endVelocity - startVelocity) / (n - 1) + (ballRadius * 4) : 0;
+    float velocityIncrement = (n > 1) ? (endVelocity - startVelocity) / (n - 1) : 0;
 
     for (int i = startSpawn; i < endSpawn; i++) {
         float currentVelocity = startVelocity + velocityIncrement * i;
