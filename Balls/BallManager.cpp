@@ -23,7 +23,7 @@ void BallManager::addBallsDistance(int n, Point start, Point end, float velocity
     float totalDistance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
     float ballRadius = 5.0f;
 
-    float spacing = totalDistance / (n - 1) + (ballRadius * 4);
+    float spacing = totalDistance / (n - 1);
 
     float dirX = distanceX / totalDistance;
     float dirY = distanceY / totalDistance;
@@ -40,7 +40,7 @@ void BallManager::addBallsAngle(int n, Point position, float velocity, float sta
 
     float ballRadius = 5.0f;
 
-    float angleIncrement = (n > 1) ? (endAngle - startAngle) / (n - 1) + (ballRadius * 4) : 0;
+    float angleIncrement = (n > 1) ? (endAngle - startAngle) / (n - 1) : 0;
 
 
     for (int i = startSpawn; i < endSpawn; i++) {
