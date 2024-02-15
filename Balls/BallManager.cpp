@@ -63,7 +63,7 @@ void BallManager::addBallsVelocity(int n, Point position, float startVelocity, f
 
 void BallManager::updateBalls(float deltaTime) {
 
-    const size_t numThreads = thread::hardware_concurrency();
+    const size_t numThreads = balls.size() > 1000 ? thread::hardware_concurrency(): 1;
     vector<thread> threads(numThreads);
     size_t ballsPerThread = balls.size() / numThreads;
 

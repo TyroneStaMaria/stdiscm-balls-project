@@ -97,7 +97,7 @@ void display() {
 
     // Define the viewport and scissor box for the balls section
     GLint ballsViewportX = 0; 
-    GLint ballsViewportY = 360; 
+    GLint ballsViewportY = 220; 
     GLsizei ballsViewportWidth = 1280;
     GLsizei ballsViewportHeight = 720;
 
