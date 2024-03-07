@@ -6,12 +6,18 @@ Sprite::Sprite(float startX, float startY)
 
 
 void Sprite::draw(float cameraX, float cameraY) {
-    glBegin(GL_TRIANGLES); // Start drawing a triangle
-    glColor3ub(157, 193, 131); // Set color to green
+    glBegin(GL_QUADS);
 
-    glVertex2f(x - cameraX, y - cameraY);
-    glVertex2f(x + 10.0f - cameraX, y + 10.0f - cameraY);
-    glVertex2f(x - 10.0f - cameraX, y + 10.0f - cameraY);
+    glColor3ub(157, 193, 131);
 
-    glEnd(); // End drawing
+    // Top vertex
+    glVertex2f(x - cameraX, y + 10.0f - cameraY);
+    // Right vertex
+    glVertex2f(x + 10.0f - cameraX, y - cameraY);
+    // Bottom vertex
+    glVertex2f(x - cameraX, y - 10.0f - cameraY);
+    // Left vertex
+    glVertex2f(x - 10.0f - cameraX, y - cameraY);
+
+    glEnd();
 }
