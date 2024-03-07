@@ -5,7 +5,9 @@
 #include <typeinfo>
 
 #include "imgui.h"
+
 #include "imgui_impl_opengl3.h"
+
 #include "imgui_impl_glut.h"
 #include "Ball.h"
 #include "BallManager.h"
@@ -28,13 +30,13 @@ int ballsSpawned = 0;
 int currBatch = 0;
 
 Point startBall = {0, 0};
-Point endBall = { 0, 0 };
+Point endBall = {0, 0};
 
 pair<float, float> angle;
 pair<float, float> velocity;
 
-Point wallPoint1 = { 0, 0 };
-Point wallPoint2 = { 0, 0 };
+Point wallPoint1 = {0, 0};
+Point wallPoint2 = {0, 0};
 
 const int targetFPS = 60;
 const float targetFrameTime = 1.0f / targetFPS;
@@ -47,9 +49,10 @@ int frameCount = 0;
 float lastFrameRateCalculationTime = 0.0f;
 float calculatedFrameRate = 0.0f;
 
-static void sliderFloat(string label, float* var, float maxValue, float minValue = 0.0f) {
-    
-    ImGui::Text(label.c_str());
+static void sliderFloat(string label, float *var, float maxValue, float minValue = 0.0f)
+{
+
+    ImGui::Text("%s", label.c_str());
     ImGui::Separator();
 
     ImGui::SetNextItemWidth(150.0f);
@@ -57,21 +60,20 @@ static void sliderFloat(string label, float* var, float maxValue, float minValue
     string inputId = "##input" + label;
     string sliderId = "##slider" + label;
 
-
     ImGui::InputFloat(inputId.c_str(), var, 0.0f, 0.0f, "%.2f");
     ImGui::SameLine();
-    
-    
+
     ImGui::SetNextItemWidth(400.0f);
     ImGui::SliderFloat(sliderId.c_str(), var, minValue, maxValue, " ");
-    
+
     *var = clamp(*var, minValue, maxValue);
 
     ImGui::Spacing();
 }
 
-static void sliderInt(string label, int* var, int maxValue) {
-    ImGui::Text(label.c_str());
+static void sliderInt(string label, int *var, int maxValue)
+{
+    ImGui::Text("%s", label.c_str());
     ImGui::Separator();
 
     ImGui::SetNextItemWidth(150.0f);
@@ -79,10 +81,8 @@ static void sliderInt(string label, int* var, int maxValue) {
     string inputId = "##input" + label;
     string sliderId = "##slider" + label;
 
-
     ImGui::InputInt(inputId.c_str(), var, 0.0f, 0.0f);
     ImGui::SameLine();
-
 
     ImGui::SetNextItemWidth(400.0f);
     ImGui::SliderInt(sliderId.c_str(), var, 0.0f, maxValue, " ");
@@ -92,14 +92,15 @@ static void sliderInt(string label, int* var, int maxValue) {
     ImGui::Spacing();
 }
 
-void display() {
+void display()
+{
     // First, clear the entire window with the main background color
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Define the viewport and scissor box for the balls section
-    GLint ballsViewportX = 0; 
-    GLint ballsViewportY = 220; 
+    GLint ballsViewportX = 0;
+    GLint ballsViewportY = 220;
     GLsizei ballsViewportWidth = 1280;
     GLsizei ballsViewportHeight = 720;
 
@@ -107,7 +108,7 @@ void display() {
     glScissor(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
     glViewport(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
 
-    ImVec4 ballsBgColor = ImVec4(0.2f, 0.3f, 0.4f, 1.0f); 
+    ImVec4 ballsBgColor = ImVec4(0.2f, 0.3f, 0.4f, 1.0f);
     glClearColor(ballsBgColor.x, ballsBgColor.y, ballsBgColor.z, ballsBgColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -126,7 +127,7 @@ void display() {
     glDisable(GL_SCISSOR_TEST);
 
     // Reset the viewport to the full window size for UI rendering
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
 
     // Start the Dear ImGui frame and render UI
@@ -137,7 +138,7 @@ void display() {
         float oldSize = ImGui::GetFont()->Scale;
         ImGui::GetFont()->Scale *= 1.25;
         ImGui::PushFont(ImGui::GetFont());
-        
+
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
         int panelWidth = 600;
@@ -147,101 +148,105 @@ void display() {
         ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
         ImGui::Begin("Control Panel");
 
-        const char* options[] = {"0", "1", "2", "3"};
+        const char *options[] = {"0", "1", "2", "3"};
 
-        for (int i = 0; i < IM_ARRAYSIZE(options); i++) {
+        for (int i = 0; i < IM_ARRAYSIZE(options); i++)
+        {
 
-            if (spawning) {
+            if (spawning)
+            {
                 ImGui::BeginDisabled();
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-                ImGui::RadioButton(options[i], &currentForm, i); 
+                ImGui::RadioButton(options[i], &currentForm, i);
                 ImGui::PopStyleVar();
                 ImGui::EndDisabled();
-            } else {
-                if (ImGui::RadioButton(options[i], &currentForm, i)) {
+            }
+            else
+            {
+                if (ImGui::RadioButton(options[i], &currentForm, i))
+                {
                     n = 0;
 
-                    startBall = { 0, 0 };
-                    endBall = { 0, 0 };
+                    startBall = {0, 0};
+                    endBall = {0, 0};
 
-                    angle = { 0, 0 };
-                    velocity = { 0, 0 };
-
+                    angle = {0, 0};
+                    velocity = {0, 0};
                 }
             }
 
-            if (i < IM_ARRAYSIZE(options) - 1) {
+            if (i < IM_ARRAYSIZE(options) - 1)
+            {
                 ImGui::SameLine();
             }
         }
 
-
         ImGui::Text("Spawn Ball");
 
-        switch (currentForm) {
-            case 0:
-                sliderFloat("x", &startBall.x, ballsViewportWidth);
-                sliderFloat("y", &startBall.y, ballsViewportHeight);
-                sliderFloat("angle", &angle.first, 360.0f);
-                sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-                if (ImGui::Button("Spawn Ball"))
-                {
-                    BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
-                }
-                break;
-            case 1:
-                sliderInt("n", &n, 10000);
+        switch (currentForm)
+        {
+        case 0:
+            sliderFloat("x", &startBall.x, ballsViewportWidth);
+            sliderFloat("y", &startBall.y, ballsViewportHeight);
+            sliderFloat("angle", &angle.first, 360.0f);
+            sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
+            if (ImGui::Button("Spawn Ball"))
+            {
+                BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
+            }
+            break;
+        case 1:
+            sliderInt("n", &n, 10000);
 
-                sliderFloat("start x", &startBall.x, ballsViewportWidth);
-                sliderFloat("start y", &startBall.y, ballsViewportHeight);
-                sliderFloat("end x", &endBall.x, ballsViewportWidth);
-                sliderFloat("end y", &endBall.y, ballsViewportHeight);
-                sliderFloat("angle", &angle.first, 360.0f);
-                sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-                //spawning = ImGui::Button("Spawn Ball");
-                if (ImGui::Button("Spawn Ball") && !spawning)
-                {
-                    spawning = true;
-                    ballsSpawned = 0;
-                    //BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
-                }
-                break;
-            case 2:
-                sliderInt("n", &n, 10000);
-                
-                sliderFloat("x", &startBall.x, ballsViewportWidth);
-                sliderFloat("y", &startBall.y, ballsViewportHeight);
-                sliderFloat("start angle", &angle.first, 360.0f);
-                sliderFloat("end angle", &angle.second, 360.0f);
-                sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-                //spawning = ImGui::Button("Spawn Ball");
+            sliderFloat("start x", &startBall.x, ballsViewportWidth);
+            sliderFloat("start y", &startBall.y, ballsViewportHeight);
+            sliderFloat("end x", &endBall.x, ballsViewportWidth);
+            sliderFloat("end y", &endBall.y, ballsViewportHeight);
+            sliderFloat("angle", &angle.first, 360.0f);
+            sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
+            // spawning = ImGui::Button("Spawn Ball");
+            if (ImGui::Button("Spawn Ball") && !spawning)
+            {
+                spawning = true;
+                ballsSpawned = 0;
+                // BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
+            }
+            break;
+        case 2:
+            sliderInt("n", &n, 10000);
 
-                if (ImGui::Button("Spawn Ball"))
-                {
-                    spawning = true;
-                    ballsSpawned = 0;
-                    //BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
-                }
-                break;
-            case 3:
-                sliderInt("n", &n, 10000);
+            sliderFloat("x", &startBall.x, ballsViewportWidth);
+            sliderFloat("y", &startBall.y, ballsViewportHeight);
+            sliderFloat("start angle", &angle.first, 360.0f);
+            sliderFloat("end angle", &angle.second, 360.0f);
+            sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
+            // spawning = ImGui::Button("Spawn Ball");
 
-                sliderFloat("x", &startBall.x, ballsViewportWidth);
-                sliderFloat("y", &startBall.y, ballsViewportHeight);
-                sliderFloat("angle", &angle.first, 360.0f);
-                sliderFloat("start velocity", &velocity.first, 2000.0f);
-                sliderFloat("end velocity", &velocity.second, 2000.0f, 300.0f);
-                //spawning = ImGui::Button("Spawn Ball");
+            if (ImGui::Button("Spawn Ball"))
+            {
+                spawning = true;
+                ballsSpawned = 0;
+                // BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
+            }
+            break;
+        case 3:
+            sliderInt("n", &n, 10000);
 
-                if (ImGui::Button("Spawn Ball"))
-                {   
-                    spawning = true;
-                    ballsSpawned = 0;
-                    //BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
-                }
-                break;
+            sliderFloat("x", &startBall.x, ballsViewportWidth);
+            sliderFloat("y", &startBall.y, ballsViewportHeight);
+            sliderFloat("angle", &angle.first, 360.0f);
+            sliderFloat("start velocity", &velocity.first, 2000.0f);
+            sliderFloat("end velocity", &velocity.second, 2000.0f, 300.0f);
+            // spawning = ImGui::Button("Spawn Ball");
+
+            if (ImGui::Button("Spawn Ball"))
+            {
+                spawning = true;
+                ballsSpawned = 0;
+                // BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
+            }
+            break;
         }
-
 
         ImGui::Spacing();
         ImGui::Separator();
@@ -256,7 +261,6 @@ void display() {
         if (ImGui::Button("Spawn Wall"))
         {
             BallManager::addWall(Wall(wallPoint1, wallPoint2));
-
         }
 
         ImGui::Spacing();
@@ -264,11 +268,9 @@ void display() {
         ImGui::Spacing();
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / calculatedFrameRate, calculatedFrameRate);
-        ImGui::Text("Number of balls: %d", BallManager::getBalls().size());
+        ImGui::Text("Number of balls: %zu", BallManager::getBalls().size());
         ImGui::GetFont()->Scale = oldSize;
         ImGui::PopFont();
-
-        
     }
 
     ImGui::End();
@@ -276,59 +278,58 @@ void display() {
     // Render ImGui
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
     glutSwapBuffers();
 }
 
-
-
-void update(int value) {
+void update(int value)
+{
     static int lastTime = glutGet(GLUT_ELAPSED_TIME);
     int currentTime = glutGet(GLUT_ELAPSED_TIME);
     float deltaTime = (currentTime - lastTime) / 1000.0f; // convert milliseconds to seconds
     lastTime = currentTime;
 
-
     accumulator += deltaTime;
 
-    if (spawning && ballsSpawned == n ) {
+    if (spawning && ballsSpawned == n)
+    {
         spawning = false;
         ballsSpawned = 0;
         currBatch = 0;
     }
 
-    if (spawning && ballsSpawned < n) {
+    if (spawning && ballsSpawned < n)
+    {
         int toSpawn = std::min(n - ballsSpawned, MAX_BATCH);
         currBatch += toSpawn;
-        switch (currentForm) {
+        switch (currentForm)
+        {
         case 1:
             BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first, ballsSpawned, currBatch);
             break;
         case 2:
-           
+
             BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second, ballsSpawned, currBatch);
             break;
         case 3:
-            
+
             BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first, ballsSpawned, currBatch);
             break;
-
         }
         ballsSpawned += toSpawn;
-
     }
 
     // Frame rate calculation
     frameCount++;
     float timeSinceLastCalculation = currentTime / 1000.0f - lastFrameRateCalculationTime; // Also in seconds
-    if (timeSinceLastCalculation >= 0.5f) { // Every 0.5 seconds
+    if (timeSinceLastCalculation >= 0.5f)
+    { // Every 0.5 seconds
         calculatedFrameRate = frameCount / timeSinceLastCalculation;
         frameCount = 0;
         lastFrameRateCalculationTime = currentTime / 1000.0f;
     }
-    
 
-    while (accumulator >= targetFrameTime) {
+    while (accumulator >= targetFrameTime)
+    {
         BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
         accumulator -= targetFrameTime;
     }
@@ -337,8 +338,9 @@ void update(int value) {
     glutTimerFunc(1, update, 0);
 }
 
+int main(int argc, char **argv)
+{
 
-int main(int argc, char** argv) {
 
     glutInit(&argc, argv);
 #ifdef __FREEGLUT_EXT_H__
@@ -354,15 +356,21 @@ int main(int argc, char** argv) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGLUT_Init();
+
+#ifdef GL_VERSION_2_0
+    ImGui_ImplOpenGL3_Init("#version 120");
+#else
     ImGui_ImplOpenGL3_Init();
+#endif
 
     ImGui_ImplGLUT_InstallFuncs();
 
