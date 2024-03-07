@@ -7,7 +7,7 @@ using namespace std;
 class SpriteManager {
 public:
     static void addSprites(const Sprite& sprite);
-    static void drawSprites();
+    static void drawSprites(float cameraX, float cameraY);
     static vector<Sprite> getSprites();
 
 private:

@@ -49,6 +49,32 @@ int frameCount = 0;
 float lastFrameRateCalculationTime = 0.0f;
 float calculatedFrameRate = 0.0f;
 
+float backgroundOffsetX = 0.0f;
+float backgroundOffsetY = 0.0f;
+
+float cameraX = 0.0f;
+float cameraY = 0.0f;
+
+// Function to adjust camera movement based on keyboard input
+void keyboard(unsigned char key, int x, int y) {
+    float cameraSpeed = 5.0f;
+    switch (key) {
+        case 'w':
+            cameraY -= cameraSpeed;
+            break;
+        case 's':
+            cameraY += cameraSpeed;
+            break;
+        case 'a':
+            cameraX += cameraSpeed;
+            break;
+        case 'd':
+            cameraX -= cameraSpeed;
+            break;
+    }
+    glutPostRedisplay();
+}
+
 static void sliderFloat(string label, float *var, float maxValue, float minValue = 0.0f)
 {
 
@@ -99,8 +125,8 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Define the viewport and scissor box for the balls section
-    GLint ballsViewportX = 0;
-    GLint ballsViewportY = 220;
+    GLint ballsViewportX = 0 - static_cast<int>(backgroundOffsetX);
+    GLint ballsViewportY = 220 - static_cast<int>(backgroundOffsetY);
     GLsizei ballsViewportWidth = 1280;
     GLsizei ballsViewportHeight = 720;
 
@@ -121,7 +147,7 @@ void display()
 
     BallManager::drawBalls();
     BallManager::drawWalls();
-    SpriteManager::drawSprites();
+    SpriteManager::drawSprites(cameraX, cameraY);
 
     // Disable the scissor test to not affect subsequent rendering
     glDisable(GL_SCISSOR_TEST);
@@ -344,6 +370,8 @@ int main(int argc, char **argv)
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
+
+    ImGui_ImplGLUT_InstallFuncs();
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
     // Setup Dear ImGui style
@@ -362,6 +390,8 @@ int main(int argc, char **argv)
 
     SpriteManager::addSprites(Sprite(20, 20));
  
+    glutKeyboardFunc(keyboard);
+
     // Main loop
     glutMainLoop();
 

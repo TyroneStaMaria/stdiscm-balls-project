@@ -11,9 +11,9 @@ void SpriteManager::addSprites(const Sprite& sprite) {
     sprites.push_back(sprite);
 }
 
-void SpriteManager::drawSprites() {
+void SpriteManager::drawSprites(float cameraX, float cameraY) {
     for (auto& sprite : sprites) {
-        sprite.draw();
+        sprite.draw(cameraX, cameraY);
     }
 }
 

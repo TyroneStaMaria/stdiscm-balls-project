@@ -5,16 +5,13 @@ Sprite::Sprite(float startX, float startY)
 }
 
 
-void Sprite::draw() {
+void Sprite::draw(float cameraX, float cameraY) {
     glBegin(GL_TRIANGLES); // Start drawing a triangle
     glColor3ub(157, 193, 131); // Set color to green
 
-    // Vertex 1 (You can adjust these coordinates as needed)
-    glVertex2f(x, y);
-    // Vertex 2
-    glVertex2f(x + 10.0f, y + 10.0f); // Adjust these to control the size and shape of your triangle
-    // Vertex 3
-    glVertex2f(x - 10.0f, y + 10.0f);
+    glVertex2f(x - cameraX, y - cameraY);
+    glVertex2f(x + 10.0f - cameraX, y + 10.0f - cameraY);
+    glVertex2f(x - 10.0f - cameraX, y + 10.0f - cameraY);
 
     glEnd(); // End drawing
 }

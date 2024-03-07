@@ -6,7 +6,7 @@
 class Sprite {
 public:
     Sprite(float startX, float startY);
-    void draw();
+    void draw(float cameraX, float cameraY);
 
     // position
     float x;
