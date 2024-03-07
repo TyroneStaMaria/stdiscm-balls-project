@@ -252,20 +252,6 @@ void display()
         ImGui::Separator();
         ImGui::Spacing();
 
-        // Spawn Wall
-        ImGui::Text("Spawn Wall");
-        sliderFloat("x1", &wallPoint1.x, ballsViewportWidth);
-        sliderFloat("y1", &wallPoint1.y, ballsViewportHeight);
-        sliderFloat("x2", &wallPoint2.x, ballsViewportWidth);
-        sliderFloat("y2", &wallPoint2.y, ballsViewportHeight);
-        if (ImGui::Button("Spawn Wall"))
-        {
-            BallManager::addWall(Wall(wallPoint1, wallPoint2));
-        }
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / calculatedFrameRate, calculatedFrameRate);
         ImGui::Text("Number of balls: %zu", BallManager::getBalls().size());
