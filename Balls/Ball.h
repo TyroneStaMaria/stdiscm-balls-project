@@ -3,10 +3,14 @@
 #include <iostream>
 #include <numbers>
 
+#if defined(__APPLE__)
+const double PI = 3.14;
+#else 
 const double PI = std::numbers::pi;
-
-class Ball{
-public: 
+#endif  
+class Ball
+{
+public:
     Ball(float startX, float startY, float velocity, float startAngle);
     void draw();
     void move(float deltaTime);
@@ -24,6 +28,4 @@ public:
     float dy;
 
     float radius = 5.0f;
-
 };
-
