@@ -12,6 +12,8 @@
 #include "Ball.h"
 #include "BallManager.h"
 #include "Point.h"
+#include "SpriteManager.h"
+#include "Sprite.h"
 
 using namespace std;
 
@@ -119,6 +121,7 @@ void display()
 
     BallManager::drawBalls();
     BallManager::drawWalls();
+    SpriteManager::drawSprites();
 
     // Disable the scissor test to not affect subsequent rendering
     glDisable(GL_SCISSOR_TEST);
@@ -371,6 +374,8 @@ int main(int argc, char **argv)
 
     ImGui_ImplGLUT_InstallFuncs();
 
+    SpriteManager::addSprites(Sprite(20, 20));
+ 
     // Main loop
     glutMainLoop();
 
