@@ -55,22 +55,42 @@ float backgroundOffsetY = 0.0f;
 float cameraX = 0.0f;
 float cameraY = 0.0f;
 
+bool isExplorerMode = false;
+const float tileSize = 1000.0f; // Example tile size, adjust based on your game's scale
+
+
+void toggleExplorerMode() {
+    isExplorerMode = !isExplorerMode;
+}
+
 // Function to adjust camera movement based on keyboard input
 void keyboard(unsigned char key, int x, int y) {
     float cameraSpeed = 5.0f;
-    switch (key) {
-        case 'w':
-            cameraY -= cameraSpeed;
-            break;
-        case 's':
-            cameraY += cameraSpeed;
-            break;
-        case 'a':
-            cameraX += cameraSpeed;
-            break;
-        case 'd':
-            cameraX -= cameraSpeed;
-            break;
+    
+    if (isExplorerMode && !SpriteManager::getSprites().empty()) {
+        Sprite& currentSprite = SpriteManager::getSprites().front(); // Assuming the controlled sprite is the first one
+        switch (key) {
+        case 'w': currentSprite.moveUp(cameraSpeed); break;
+        case 's': currentSprite.moveDown(cameraSpeed); break;
+        case 'a': currentSprite.moveLeft(cameraSpeed); break;
+        case 'd': currentSprite.moveRight(cameraSpeed); break;
+        }
+    }
+    else {
+        switch (key) {
+            case 'w':
+                cameraY -= cameraSpeed;
+                break;
+            case 's':
+                cameraY += cameraSpeed;
+                break;
+            case 'a':
+                cameraX += cameraSpeed;
+                break;
+            case 'd':
+                cameraX -= cameraSpeed;
+                break;
+        }
     }
     glutPostRedisplay();
 }
@@ -278,6 +298,37 @@ void display()
         ImGui::Separator();
         ImGui::Spacing();
 
+        ImGui::Text("Controls");
+        if (ImGui::Button("Explorer Mode")) {
+            isExplorerMode = !isExplorerMode; // Toggle the explorer mode state
+        }
+
+        auto sprites = SpriteManager::getSprites();
+        if (!sprites.empty() && isExplorerMode) {
+            const auto& sprite = sprites.front();
+
+            // Calculate new camera positions based on the sprite's position
+            // The goal is to keep the sprite centered, so we adjust the camera instead of moving the sprite
+            cameraX = sprite.x - MAX_WIDTH / 2;
+            cameraY = sprite.y - MAX_HEIGHT / 2;
+        }
+
+        // Setup the camera or view transformation
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        if (isExplorerMode) {
+            // Apply a zoom factor if needed or just center on the sprite
+            gluOrtho2D(-MAX_WIDTH / 2 + cameraX, MAX_WIDTH / 2 + cameraX, -MAX_HEIGHT / 2 + cameraY, MAX_HEIGHT / 2 + cameraY);
+        }
+        else {
+            gluOrtho2D(0, MAX_WIDTH, 0, MAX_HEIGHT);
+        }
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / calculatedFrameRate, calculatedFrameRate);
         ImGui::Text("Number of balls: %zu", BallManager::getBalls().size());

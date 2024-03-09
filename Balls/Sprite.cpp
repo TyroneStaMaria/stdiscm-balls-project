@@ -21,3 +21,19 @@ void Sprite::draw(float cameraX, float cameraY) {
 
     glEnd();
 }
+
+void Sprite::moveUp(float amount) {
+    y += amount;
+}
+
+void Sprite::moveDown(float amount) {
+    y -= amount;
+}
+
+void Sprite::moveLeft(float amount) {
+    x -= amount;
+}
+
+void Sprite::moveRight(float amount) {
+    x += amount;
+}
