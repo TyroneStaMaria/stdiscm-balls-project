@@ -1,9 +1,12 @@
 #include "Sprite.h"
 
+Sprite::Sprite()
+    : x(0), y(0) { // Initializes x and y to some default value, e.g., 0
+}
+
 Sprite::Sprite(float startX, float startY)
     : x(startX), y(startY) {
 }
-
 
 void Sprite::draw(float cameraX, float cameraY) {
     glBegin(GL_QUADS);
@@ -36,4 +39,12 @@ void Sprite::moveLeft(float amount) {
 
 void Sprite::moveRight(float amount) {
     x += amount;
+}
+
+float Sprite::getX() const {
+    return x; // Return the private member variable x
+}
+
+float Sprite::getY() const {
+    return y; // Return the private member variable y
 }

@@ -112,11 +112,23 @@ void BallManager::updateBalls(float deltaTime) {
     
 }
 
-
-
-void BallManager::drawBalls() {
+void BallManager::drawBalls(float cameraX, float cameraY, float peripheryWidth, float peripheryHeight, bool isExplorerMode, float zoomScale) {
     for (auto& ball : balls) {
-        ball.draw();
+        // Calculate if the ball is within the zoomed-in periphery in explorer mode
+        bool isInPeriphery = (ball.x >= cameraX && ball.x <= cameraX + peripheryWidth) &&
+            (ball.y >= cameraY && ball.y <= cameraY + peripheryHeight);
+
+        // Only draw the ball if it's within the periphery or if not in explorer mode
+        if (isInPeriphery || !isExplorerMode) {
+            if (isExplorerMode) {
+                // Apply zoom factor to the ball's size when drawing if in explorer mode
+                ball.drawScaled(zoomScale);
+            }
+            else {
+                // Draw ball at normal size
+                ball.draw();
+            }
+        }
     }
 }
 

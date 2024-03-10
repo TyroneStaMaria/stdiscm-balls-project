@@ -17,6 +17,8 @@ public:
     void invertDirection();
     void normalizeVelocity();
     void checkCanvasCollision();
+    void drawScaled(float scale);
+
     // position
     float x;
     float y;

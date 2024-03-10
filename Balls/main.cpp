@@ -57,6 +57,13 @@ float cameraY = 0.0f;
 
 bool isExplorerMode = false;
 const float tileSize = 1000.0f; // Example tile size, adjust based on your game's scale
+SpriteManager spriteManager;
+float zoomFactor = 2.0f; // Example zoom factor, adjust based on your desired zoom level
+const float peripheryTileSize = 10.0f; // Tile size in pixels
+const int peripheryWidthTiles = 33; // Number of horizontal tiles
+const int peripheryHeightTiles = 19; // Number of vertical tiles
+const float peripheryWidth = peripheryWidthTiles * peripheryTileSize;
+const float peripheryHeight = peripheryHeightTiles * peripheryTileSize;
 
 
 void toggleExplorerMode() {
@@ -165,9 +172,9 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    BallManager::drawBalls();
+    BallManager::drawBalls(cameraX, cameraY, peripheryWidth, peripheryHeight, isExplorerMode, zoomFactor);
     BallManager::drawWalls();
-    SpriteManager::drawSprites(cameraX, cameraY);
+    spriteManager.drawSprites(cameraX, cameraY, isExplorerMode);
 
     // Disable the scissor test to not affect subsequent rendering
     glDisable(GL_SCISSOR_TEST);
@@ -303,29 +310,6 @@ void display()
             isExplorerMode = !isExplorerMode; // Toggle the explorer mode state
         }
 
-        auto sprites = SpriteManager::getSprites();
-        if (!sprites.empty() && isExplorerMode) {
-            const auto& sprite = sprites.front();
-
-            // Calculate new camera positions based on the sprite's position
-            // The goal is to keep the sprite centered, so we adjust the camera instead of moving the sprite
-            cameraX = sprite.x - MAX_WIDTH / 2;
-            cameraY = sprite.y - MAX_HEIGHT / 2;
-        }
-
-        // Setup the camera or view transformation
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        if (isExplorerMode) {
-            // Apply a zoom factor if needed or just center on the sprite
-            gluOrtho2D(-MAX_WIDTH / 2 + cameraX, MAX_WIDTH / 2 + cameraX, -MAX_HEIGHT / 2 + cameraY, MAX_HEIGHT / 2 + cameraY);
-        }
-        else {
-            gluOrtho2D(0, MAX_WIDTH, 0, MAX_HEIGHT);
-        }
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
@@ -439,7 +423,7 @@ int main(int argc, char **argv)
 
     ImGui_ImplGLUT_InstallFuncs();
 
-    SpriteManager::addSprites(Sprite(20, 20));
+    spriteManager.addSprites(Sprite(20, 20));
  
     glutKeyboardFunc(keyboard);
 
