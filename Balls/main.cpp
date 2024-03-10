@@ -328,15 +328,18 @@ void display()
         ImGui::Text("Number of balls: %zu", BallManager::getBalls().size());
         ImGui::GetFont()->Scale = oldSize;
         ImGui::PopFont();
+
+        ImGui::End();
+
+        // Render ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glutSwapBuffers();
     }
 
-    ImGui::End();
-
-    // Render ImGui
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glutSwapBuffers();
 }
+
+
 
 void update(int value)
 {
