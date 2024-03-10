@@ -194,109 +194,119 @@ void display()
         ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
         ImGui::Begin("Control Panel");
 
-        const char *options[] = {"0", "1", "2", "3"};
-
-        for (int i = 0; i < IM_ARRAYSIZE(options); i++)
-        {
-
-            if (spawning)
-            {
-                ImGui::BeginDisabled();
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-                ImGui::RadioButton(options[i], &currentForm, i);
-                ImGui::PopStyleVar();
-                ImGui::EndDisabled();
+        // Toggle between Explorer and Developer Mode
+        if (isExplorerMode) {
+            ImGui::Text("Controls");
+            if (ImGui::Button("Developer Mode")) {
+                isExplorerMode = false; // Switch to Developer Mode
             }
-            else
-            {
-                if (ImGui::RadioButton(options[i], &currentForm, i))
+        } else {
+
+                const char *options[] = {"0", "1", "2", "3"};
+
+                for (int i = 0; i < IM_ARRAYSIZE(options); i++)
                 {
-                    n = 0;
 
-                    startBall = {0, 0};
-                    endBall = {0, 0};
+                    if (spawning)
+                    {
+                        ImGui::BeginDisabled();
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                        ImGui::RadioButton(options[i], &currentForm, i);
+                        ImGui::PopStyleVar();
+                        ImGui::EndDisabled();
+                    }
+                    else
+                    {
+                        if (ImGui::RadioButton(options[i], &currentForm, i))
+                        {
+                            n = 0;
 
-                    angle = {0, 0};
-                    velocity = {0, 0};
+                            startBall = {0, 0};
+                            endBall = {0, 0};
+
+                            angle = {0, 0};
+                            velocity = {0, 0};
+                        }
+                    }
+
+                    if (i < IM_ARRAYSIZE(options) - 1)
+                    {
+                        ImGui::SameLine();
+                    }
                 }
-            }
 
-            if (i < IM_ARRAYSIZE(options) - 1)
-            {
-                ImGui::SameLine();
-            }
-        }
+                ImGui::Text("Spawn Ball");
 
-        ImGui::Text("Spawn Ball");
+                switch (currentForm)
+                {
+                case 0:
+                    sliderFloat("x", &startBall.x, ballsViewportWidth);
+                    sliderFloat("y", &startBall.y, ballsViewportHeight);
+                    sliderFloat("angle", &angle.first, 360.0f);
+                    sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
+                    if (ImGui::Button("Spawn Ball"))
+                    {
+                        BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
+                    }
+                    break;
+                case 1:
+                    sliderInt("n", &n, 10000);
 
-        switch (currentForm)
-        {
-        case 0:
-            sliderFloat("x", &startBall.x, ballsViewportWidth);
-            sliderFloat("y", &startBall.y, ballsViewportHeight);
-            sliderFloat("angle", &angle.first, 360.0f);
-            sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-            if (ImGui::Button("Spawn Ball"))
-            {
-                BallManager::addBall(Ball(startBall.x, startBall.y, velocity.first, angle.first));
-            }
-            break;
-        case 1:
-            sliderInt("n", &n, 10000);
+                    sliderFloat("start x", &startBall.x, ballsViewportWidth);
+                    sliderFloat("start y", &startBall.y, ballsViewportHeight);
+                    sliderFloat("end x", &endBall.x, ballsViewportWidth);
+                    sliderFloat("end y", &endBall.y, ballsViewportHeight);
+                    sliderFloat("angle", &angle.first, 360.0f);
+                    sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
+                    // spawning = ImGui::Button("Spawn Ball");
+                    if (ImGui::Button("Spawn Ball") && !spawning)
+                    {
+                        spawning = true;
+                        ballsSpawned = 0;
+                        // BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
+                    }
+                    break;
+                case 2:
+                    sliderInt("n", &n, 10000);
 
-            sliderFloat("start x", &startBall.x, ballsViewportWidth);
-            sliderFloat("start y", &startBall.y, ballsViewportHeight);
-            sliderFloat("end x", &endBall.x, ballsViewportWidth);
-            sliderFloat("end y", &endBall.y, ballsViewportHeight);
-            sliderFloat("angle", &angle.first, 360.0f);
-            sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-            // spawning = ImGui::Button("Spawn Ball");
-            if (ImGui::Button("Spawn Ball") && !spawning)
-            {
-                spawning = true;
-                ballsSpawned = 0;
-                // BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
-            }
-            break;
-        case 2:
-            sliderInt("n", &n, 10000);
+                    sliderFloat("x", &startBall.x, ballsViewportWidth);
+                    sliderFloat("y", &startBall.y, ballsViewportHeight);
+                    sliderFloat("start angle", &angle.first, 360.0f);
+                    sliderFloat("end angle", &angle.second, 360.0f);
+                    sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
+                    // spawning = ImGui::Button("Spawn Ball");
 
-            sliderFloat("x", &startBall.x, ballsViewportWidth);
-            sliderFloat("y", &startBall.y, ballsViewportHeight);
-            sliderFloat("start angle", &angle.first, 360.0f);
-            sliderFloat("end angle", &angle.second, 360.0f);
-            sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-            // spawning = ImGui::Button("Spawn Ball");
+                    if (ImGui::Button("Spawn Ball"))
+                    {
+                        spawning = true;
+                        ballsSpawned = 0;
+                        // BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
+                    }
+                    break;
+                case 3:
+                    sliderInt("n", &n, 10000);
 
-            if (ImGui::Button("Spawn Ball"))
-            {
-                spawning = true;
-                ballsSpawned = 0;
-                // BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
-            }
-            break;
-        case 3:
-            sliderInt("n", &n, 10000);
+                    sliderFloat("x", &startBall.x, ballsViewportWidth);
+                    sliderFloat("y", &startBall.y, ballsViewportHeight);
+                    sliderFloat("angle", &angle.first, 360.0f);
+                    sliderFloat("start velocity", &velocity.first, 2000.0f);
+                    sliderFloat("end velocity", &velocity.second, 2000.0f, 300.0f);
+                    // spawning = ImGui::Button("Spawn Ball");
 
-            sliderFloat("x", &startBall.x, ballsViewportWidth);
-            sliderFloat("y", &startBall.y, ballsViewportHeight);
-            sliderFloat("angle", &angle.first, 360.0f);
-            sliderFloat("start velocity", &velocity.first, 2000.0f);
-            sliderFloat("end velocity", &velocity.second, 2000.0f, 300.0f);
-            // spawning = ImGui::Button("Spawn Ball");
+                    if (ImGui::Button("Spawn Ball"))
+                    {
+                        spawning = true;
+                        ballsSpawned = 0;
+                        // BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
+                    }
+                    break;
+                }
 
-            if (ImGui::Button("Spawn Ball"))
-            {
-                spawning = true;
-                ballsSpawned = 0;
-                // BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
-            }
-            break;
-        }
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
 
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
+            
 
         ImGui::Text("Controls");
         if (ImGui::Button("Explorer Mode")) {
@@ -323,6 +333,7 @@ void display()
         else {
             gluOrtho2D(0, MAX_WIDTH, 0, MAX_HEIGHT);
         }
+        }
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -334,15 +345,18 @@ void display()
         ImGui::Text("Number of balls: %zu", BallManager::getBalls().size());
         ImGui::GetFont()->Scale = oldSize;
         ImGui::PopFont();
+
+        ImGui::End();
+
+        // Render ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glutSwapBuffers();
     }
 
-    ImGui::End();
-
-    // Render ImGui
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glutSwapBuffers();
 }
+
+
 
 void update(int value)
 {
