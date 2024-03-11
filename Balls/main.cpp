@@ -172,7 +172,16 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    BallManager::drawBalls(cameraX, cameraY, peripheryWidth, peripheryHeight, isExplorerMode, zoomFactor);
+    if (isExplorerMode) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Assuming full screen is desired viewing area, adjust as needed
+    gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    }
+
+    BallManager::drawBalls(cameraX, cameraY, peripheryWidth, peripheryHeight, isExplorerMode, 1.0f);
     BallManager::drawWalls();
     spriteManager.drawSprites(cameraX, cameraY, isExplorerMode);
 
