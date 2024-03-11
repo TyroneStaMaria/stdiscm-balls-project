@@ -6,6 +6,8 @@ Sprite::Sprite()
 
 Sprite::Sprite(float startX, float startY)
     : x(startX), y(startY) {
+
+    std::cout << x << " " << y << std::endl;
 }
 
 void Sprite::draw(float cameraX, float cameraY) {
