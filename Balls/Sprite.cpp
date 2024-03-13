@@ -16,13 +16,13 @@ void Sprite::draw(float cameraX, float cameraY) {
     glColor3ub(157, 193, 131);
 
     // Top vertex
-    glVertex2f(x - cameraX, y + 10.0f - cameraY);
+    glVertex2f(x, y + 10.0f);
     // Right vertex
-    glVertex2f(x + 10.0f - cameraX, y - cameraY);
+    glVertex2f(x + 10.0f, y);
     // Bottom vertex
-    glVertex2f(x - cameraX, y - 10.0f - cameraY);
+    glVertex2f(x, y - 10.0f);
     // Left vertex
-    glVertex2f(x - 10.0f - cameraX, y - cameraY);
+    glVertex2f(x - 10.0f, y);
 
     glEnd();
 }
@@ -49,4 +49,12 @@ float Sprite::getX() const {
 
 float Sprite::getY() const {
     return y; // Return the private member variable y
+}
+
+void Sprite::setX(float num){
+    x = num;
+}
+
+void Sprite::setY(float num){
+    y = num;
 }

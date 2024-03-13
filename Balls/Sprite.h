@@ -16,6 +16,10 @@ public:
     float getX() const; // Gets the X position
     float getY() const; // Gets the Y position
 
+    void setX(float num);
+    void setY(float num);
+
+private:
     // position
     float x;
     float y;

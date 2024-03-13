@@ -57,7 +57,7 @@ float cameraY = 0.0f;
 
 bool isExplorerMode = false;
 const float tileSize = 1000.0f; // Example tile size, adjust based on your game's scale
-SpriteManager spriteManager;
+SpriteManager spriteManager = SpriteManager();
 float zoomFactor = 2.0f; // Example zoom factor, adjust based on your desired zoom level
 const float peripheryTileSize = 10.0f; // Tile size in pixels
 const int peripheryWidthTiles = 33; // Number of horizontal tiles
@@ -65,6 +65,8 @@ const int peripheryHeightTiles = 19; // Number of vertical tiles
 const float peripheryWidth = peripheryWidthTiles * peripheryTileSize;
 const float peripheryHeight = peripheryHeightTiles * peripheryTileSize;
 
+GLsizei ballsViewportWidth = 1280;
+GLsizei ballsViewportHeight = 720;
 
 void toggleExplorerMode() {
     isExplorerMode = !isExplorerMode;
@@ -73,31 +75,44 @@ void toggleExplorerMode() {
 // Function to adjust camera movement based on keyboard input
 void keyboard(unsigned char key, int x, int y) {
     float cameraSpeed = 5.0f;
-    
-    if (isExplorerMode && !SpriteManager::getSprites().empty()) {
-        Sprite& currentSprite = SpriteManager::getSprites().front(); // Assuming the controlled sprite is the first one
-        switch (key) {
-        case 'w': currentSprite.moveUp(cameraSpeed); break;
-        case 's': currentSprite.moveDown(cameraSpeed); break;
-        case 'a': currentSprite.moveLeft(cameraSpeed); break;
-        case 'd': currentSprite.moveRight(cameraSpeed); break;
+
+    Sprite& currentSprite = SpriteManager::getSprites().front(); // Assuming the controlled sprite is the first one
+
+    float spriteX = currentSprite.getX();
+    float spriteY = currentSprite.getY();
+    switch (key) {
+    case 'w': 
+
+        if(spriteY >= ballsViewportHeight){
+            currentSprite.setY(ballsViewportHeight);            
+            break;
         }
-    }
-    else {
-        switch (key) {
-            case 'w':
-                cameraY -= cameraSpeed;
-                break;
-            case 's':
-                cameraY += cameraSpeed;
-                break;
-            case 'a':
-                cameraX += cameraSpeed;
-                break;
-            case 'd':
-                cameraX -= cameraSpeed;
-                break;
+        currentSprite.moveUp(cameraSpeed); 
+        cout << currentSprite.getX() << ", " << currentSprite.getY() << endl;
+        break;
+    case 's': 
+        
+        if(spriteY <= 0){
+            currentSprite.setY(0);
+            break;
         }
+        
+        currentSprite.moveDown(cameraSpeed); 
+        break;
+    case 'a': 
+        if(spriteX <= 0){
+            currentSprite.setX(0);
+            break;
+        }
+        currentSprite.moveLeft(cameraSpeed); 
+        break;
+    case 'd': 
+        if(spriteX >= ballsViewportWidth){
+            currentSprite.setX(ballsViewportWidth);
+            break;
+        }
+        currentSprite.moveRight(cameraSpeed); 
+        break;
     }
     glutPostRedisplay();
 }
@@ -154,8 +169,7 @@ void display()
     // Define the viewport and scissor box for the balls section
     GLint ballsViewportX = 0 - static_cast<int>(backgroundOffsetX);
     GLint ballsViewportY = 220 - static_cast<int>(backgroundOffsetY);
-    GLsizei ballsViewportWidth = 1280;
-    GLsizei ballsViewportHeight = 720;
+    
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
@@ -174,16 +188,18 @@ void display()
 
     if (isExplorerMode) {
         Sprite& mainSprite = SpriteManager::getSprites().front();
-        float centerX = 20;
-        float centerY = 20;
+        float centerX = mainSprite.getX();
+        float centerY = mainSprite.getY();
 
-        std::cout << mainSprite.getX() << " " << mainSprite.getY();
+        cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         // Assuming full screen is desired viewing area, adjust as needed
-        //gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
-        gluOrtho2D(cameraX, -(cameraX - peripheryWidth / 2), cameraY, -(cameraY - peripheryHeight / 2));
+        // gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
+        gluOrtho2D(centerX, centerX + peripheryWidth, centerY, centerY + peripheryHeight);
+
+        // gluOrtho2D(cameraX, -(cameraX - peripheryWidth / 2), cameraY, -(cameraY - peripheryHeight / 2));
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
     }
