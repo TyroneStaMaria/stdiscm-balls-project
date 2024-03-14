@@ -188,13 +188,13 @@ void display()
 
     if (isExplorerMode) {
         Sprite& mainSprite = SpriteManager::getSprites().front();
-        float centerX = mainSprite.getX();
-        float centerY = mainSprite.getY();
+        float centerX = mainSprite.getX() - peripheryWidth / 2.0f;
+        float centerY = mainSprite.getY() - peripheryHeight / 2.0f;
 
         cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
 
         glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
+        glLoadIdentity(); 
         // Assuming full screen is desired viewing area, adjust as needed
         // gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
         gluOrtho2D(centerX, centerX + peripheryWidth, centerY, centerY + peripheryHeight);
