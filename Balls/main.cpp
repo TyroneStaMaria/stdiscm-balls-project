@@ -355,13 +355,13 @@ void display()
 
 }
 
-
-
-void update(int value)
-{
+void update(int value){
     static int lastTime = glutGet(GLUT_ELAPSED_TIME);
+    static int frameCount = 0; // Count of frames since the last FPS calculation
+    static float lastFpsTime = 0.0f; // Last time the FPS was updated
+
     int currentTime = glutGet(GLUT_ELAPSED_TIME);
-    float deltaTime = (currentTime - lastTime) / 1000.0f; // convert milliseconds to seconds
+    float deltaTime = (currentTime - lastTime) / 1000.0f; // Time since the last frame in seconds
     lastTime = currentTime;
 
     accumulator += deltaTime;
@@ -394,24 +394,26 @@ void update(int value)
         ballsSpawned += toSpawn;
     }
 
-    // Frame rate calculation
-    frameCount++;
-    float timeSinceLastCalculation = currentTime / 1000.0f - lastFrameRateCalculationTime; // Also in seconds
-    if (timeSinceLastCalculation >= 0.5f)
-    { // Every 0.5 seconds
-        calculatedFrameRate = frameCount / timeSinceLastCalculation;
-        frameCount = 0;
-        lastFrameRateCalculationTime = currentTime / 1000.0f;
-    }
-
     while (accumulator >= targetFrameTime)
     {
         BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
         accumulator -= targetFrameTime;
     }
 
+    frameCount++;
+    float fpsUpdateTime = currentTime / 1000.0f - lastFpsTime;
+    if (fpsUpdateTime >= 0.5f) { // Update FPS every 0.5 seconds
+        calculatedFrameRate = frameCount / fpsUpdateTime; // Calculate FPS
+        frameCount = 0; // Reset frame count for the next FPS calculation
+        lastFpsTime = currentTime / 1000.0f; // Reset the FPS timer
+    }
+
+    float frameProcessingTime = (glutGet(GLUT_ELAPSED_TIME) - currentTime) / 1000.0f;
+    float timeUntilNextFrame = targetFrameTime - frameProcessingTime;
+    int delay = max(0, static_cast<int>(timeUntilNextFrame * 1000.0f));
+
     glutPostRedisplay();
-    glutTimerFunc(1, update, 0);
+    glutTimerFunc(delay, update, 0); // Adjust the delay dynamically based on the frame processing time
 }
 
 int main(int argc, char **argv)
