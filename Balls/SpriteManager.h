@@ -34,7 +34,7 @@ public:
     SpriteManager(); // Default constructor
     static void addSprites(const Sprite& sprite); // Note: Should this be static?
     void drawSprites(float cameraX, float cameraY, bool isExplorerMode); // Changed to non-static
-    static vector<Sprite> getSprites();
+    static vector<Sprite>& getSprites();
 
     // These are no longer static
     bool explorerMode;

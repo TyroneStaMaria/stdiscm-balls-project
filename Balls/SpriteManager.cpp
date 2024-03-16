@@ -27,8 +27,8 @@ void SpriteManager::drawSprites(float cameraX, float cameraY, bool isExplorerMod
 
         // Assuming `mainSprite` has members `x` and `y` for position
         // Center camera on sprite
-        cameraX = mainSprite.x - peripheryWidth / 2.0f;
-        cameraY = mainSprite.y - peripheryHeight / 2.0f;
+        cameraX = mainSprite.getX() - peripheryWidth / 2.0f;
+        cameraY = mainSprite.getY() - peripheryHeight / 2.0f;
 
         // Set up camera view
         glMatrixMode(GL_PROJECTION);
@@ -48,6 +48,6 @@ void SpriteManager::drawSprites(float cameraX, float cameraY, bool isExplorerMod
     }
 }
 
-vector<Sprite> SpriteManager::getSprites() {
+vector<Sprite>& SpriteManager::getSprites() {
     return sprites;
 }
