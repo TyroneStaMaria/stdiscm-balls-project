@@ -23,7 +23,7 @@ private:
     // position
     float x;
     float y;
-
+    float height = 10.0f; 
     float radius = 5.0f;
 
 

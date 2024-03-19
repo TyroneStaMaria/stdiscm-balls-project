@@ -240,8 +240,8 @@ void display()
     if (isExplorerMode) {
         drawBorderLines(20.0f, 20.0f, 50);
         Sprite& mainSprite = SpriteManager::getSprites().front();
-        float centerX = mainSprite.getX() - peripheryWidth / 2.0f;
-        float centerY = mainSprite.getY() - peripheryHeight / 2.0f;
+        float centerX = mainSprite.getX() - peripheryWidth / 4.0f;
+        float centerY = mainSprite.getY() - peripheryHeight / 3.0f;
 
         //cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
 
