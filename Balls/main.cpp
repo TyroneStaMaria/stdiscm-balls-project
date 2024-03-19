@@ -117,6 +117,57 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+void drawBorderLines(float lineWidth, float borderWidth, int numLines) {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glOrtho(0, ballsViewportWidth, 0, ballsViewportHeight, -1.0, 1.0);
+
+    glLineWidth(lineWidth);
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+
+    Sprite& mainSprite = SpriteManager::getSprites().front();
+    float spriteX = mainSprite.getX();
+    float spriteY = mainSprite.getY();
+
+    if (spriteY >= ballsViewportHeight - borderWidth) {
+        for (int i = 0; i < numLines; i++) {
+            glBegin(GL_LINES);
+            glVertex2f(0.0f, ballsViewportHeight - i);
+            glVertex2f(ballsViewportWidth, ballsViewportHeight - i);
+            glEnd();
+        }
+    }
+
+    if (spriteY <= borderWidth) {
+        for (int i = 0; i < numLines; i++) {
+            glBegin(GL_LINES);
+            glVertex2f(0.0f, i);
+            glVertex2f(ballsViewportWidth, i);
+            glEnd();
+        }
+    }
+    if (spriteX <= borderWidth) {
+        for (int i = 0; i < numLines; i++) {
+            glBegin(GL_LINES);
+            glVertex2f(i, 0.0f);
+            glVertex2f(i, ballsViewportHeight);
+            glEnd();
+        }
+    }
+    if (spriteX >= ballsViewportWidth - borderWidth) {
+        for (int i = 0; i < numLines; i++) {
+            glBegin(GL_LINES);
+            glVertex2f(ballsViewportWidth - i, 0.0f);
+            glVertex2f(ballsViewportWidth - i, ballsViewportHeight);
+            glEnd();
+        }
+    }
+    glPopMatrix();
+}
+
 static void sliderFloat(string label, float *var, float maxValue, float minValue = 0.0f)
 {
 
@@ -187,6 +238,7 @@ void display()
     glLoadIdentity();
 
     if (isExplorerMode) {
+        drawBorderLines(20.0f, 20.0f, 50);
         Sprite& mainSprite = SpriteManager::getSprites().front();
         float centerX = mainSprite.getX() - peripheryWidth / 2.0f;
         float centerY = mainSprite.getY() - peripheryHeight / 2.0f;
