@@ -16,30 +16,35 @@ void Sprite::draw(float cameraX, float cameraY) {
     glColor3ub(157, 193, 131);
 
     // Top vertex
-    glVertex2f(x, y + 10.0f);
+    glVertex2f(x, y + height);
     // Right vertex
-    glVertex2f(x + 10.0f, y);
+    glVertex2f(x + height, y);
     // Bottom vertex
-    glVertex2f(x, y - 10.0f);
+    glVertex2f(x, y - height);
     // Left vertex
-    glVertex2f(x - 10.0f, y);
+    glVertex2f(x - height, y);
 
     glEnd();
 }
 
 void Sprite::moveUp(float amount) {
+    height = height == 10.0f ? 7.5f : 10.0f;
     y += amount;
 }
 
 void Sprite::moveDown(float amount) {
+    height = height == 10.0f ? 7.5f : 10.0f;
     y -= amount;
 }
 
 void Sprite::moveLeft(float amount) {
+    height = height == 10.0f ? 7.5f : 10.0f;
+
     x -= amount;
 }
 
 void Sprite::moveRight(float amount) {
+    height = height == 10.0f ? 7.5f : 10.0f;
     x += amount;
 }
 
