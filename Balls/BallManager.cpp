@@ -70,31 +70,9 @@ void BallManager::updateBalls(float deltaTime) {
     auto updateRange = [](int start, int end, float deltaTime) {
         for (int i = start; i < end; i++) {
             // Calculate the ball's next position based on its current velocity components
-            bool collision = false;
             float nextX = balls[i].x + balls[i].dx * deltaTime;
             float nextY = balls[i].y + balls[i].dy * deltaTime;
-            balls[i].checkCanvasCollision();
 
-
-            for (const auto& wall : walls) {
-
-                float temp = (balls[i].x - nextX) * (wall.point1.y - wall.point2.y) - (balls[i].y - nextY) * (wall.point1.x - wall.point2.x);
-
-                if (temp != 0)
-                {
-                    double t = ((balls[i].x - wall.point1.x) * (wall.point1.y - wall.point2.y) - (balls[i].y - wall.point1.y) * (wall.point1.x - wall.point2.x)) / temp;
-                    double u = -((balls[i].x - nextX) * (balls[i].y - wall.point1.y) - (balls[i].y - nextY) * (balls[i].x - wall.point1.x)) / temp;
-
-                    collision = t >= 0 && t <= 1 && u >= 0 && u <= 1;
-                }
-
-                if (collision) {
-                    // Invert direction only if collision is detected
-                    balls[i].invertDirection();
-                }
-            }
-
-            // Move the ball after checking for collisions
             balls[i].move(deltaTime);
         }
     };
@@ -108,29 +86,11 @@ void BallManager::updateBalls(float deltaTime) {
     for (auto& thread : threads) {
         thread.join(); // Wait for all threads to finish
     }
-
-    
 }
 
-void BallManager::drawBalls(float cameraX, float cameraY, float peripheryWidth, float peripheryHeight, bool isExplorerMode, float zoomScale) {
+void BallManager::drawBalls() {
     for (auto& ball : balls) {
-        // Calculate if the ball is within the zoomed-in periphery in explorer mode
-        bool isInPeriphery = (ball.x >= cameraX && ball.x <= cameraX + peripheryWidth) &&
-            (ball.y >= cameraY && ball.y <= cameraY + peripheryHeight);
-        
         ball.draw();
-
-        // Only draw the ball if it's within the periphery or if not in explorer mode
-        // if (isInPeriphery || !isExplorerMode) {
-        //     if (isExplorerMode) {
-        //         // Apply zoom factor to the ball's size when drawing if in explorer mode
-        //         ball.drawScaled(zoomScale);
-        //     }
-        //     else {
-        //         // Draw ball at normal size
-        //         ball.draw();
-        //     }
-        // }
     }
 }
 

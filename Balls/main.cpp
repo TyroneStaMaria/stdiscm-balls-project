@@ -243,7 +243,7 @@ void display()
         float centerX = mainSprite.getX() - peripheryWidth / 2.0f;
         float centerY = mainSprite.getY() - peripheryHeight / 2.0f;
 
-        cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
+        //cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity(); 
@@ -256,7 +256,7 @@ void display()
         glLoadIdentity();
     }
 
-    BallManager::drawBalls(cameraX, cameraY, peripheryWidth, peripheryHeight, isExplorerMode, 1.0f);
+    BallManager::drawBalls();
     BallManager::drawWalls();
     spriteManager.drawSprites(cameraX, cameraY, isExplorerMode);
 
