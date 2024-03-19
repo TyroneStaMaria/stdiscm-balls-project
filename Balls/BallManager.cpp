@@ -70,8 +70,10 @@ void BallManager::updateBalls(float deltaTime) {
     auto updateRange = [](int start, int end, float deltaTime) {
         for (int i = start; i < end; i++) {
             // Calculate the ball's next position based on its current velocity components
+            bool collision = false;
             float nextX = balls[i].x + balls[i].dx * deltaTime;
             float nextY = balls[i].y + balls[i].dy * deltaTime;
+            balls[i].checkCanvasCollision();
 
             balls[i].move(deltaTime);
         }
