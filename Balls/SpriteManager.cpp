@@ -15,9 +15,9 @@ void SpriteManager::addSprites(const Sprite& sprite) {
 }
 
 void SpriteManager::drawSprites(float cameraX, float cameraY, bool isExplorerMode) {
-    if (isExplorerMode) {
-        // Get the first sprite's position as the main sprite
-        mainSprite = sprites.front(); // Assuming mainSprite is the sprite you control
+    if (isExplorerMode && !sprites.empty()) {
+        // Assuming mainSprite is the sprite you control
+        Sprite& mainSprite = sprites.front();
 
         const float peripheryTileSize = 10.0f; // Tile size in pixels
         const int peripheryWidthTiles = 33; // Number of horizontal tiles
@@ -25,20 +25,33 @@ void SpriteManager::drawSprites(float cameraX, float cameraY, bool isExplorerMod
         const float peripheryWidth = peripheryWidthTiles * peripheryTileSize;
         const float peripheryHeight = peripheryHeightTiles * peripheryTileSize;
 
-        // Assuming `mainSprite` has members `x` and `y` for position
-        // Center camera on sprite
-        cameraX = mainSprite.getX() - peripheryWidth / 2.0f;
-        cameraY = mainSprite.getY() - peripheryHeight / 2.0f;
+        // World dimensions
+        const float worldWidth = 1280;
+        const float worldHeight = 720;
 
-        // Set up camera view
+        // Adjust camera to prevent sprite from being centered near edges
+        float adjustedCameraX = mainSprite.getX() - peripheryWidth / 2.0f;
+        float adjustedCameraY = mainSprite.getY() - peripheryHeight / 2.0f;
+
+        // Prevent camera from going beyond the world bounds (left and bottom edges)
+        adjustedCameraX = max(0.0f, adjustedCameraX);
+        adjustedCameraY = max(0.0f, adjustedCameraY);
+
+        // Prevent camera from going beyond the world bounds (right and top edges)
+        adjustedCameraX = min(adjustedCameraX, worldWidth - peripheryWidth);
+        adjustedCameraY = min(adjustedCameraY, worldHeight - peripheryHeight);
+
+        // Set up camera view based on adjusted positions
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluOrtho2D(cameraX, cameraX + peripheryWidth, cameraY, cameraY + peripheryHeight);
+        gluOrtho2D(adjustedCameraX, adjustedCameraX + peripheryWidth, adjustedCameraY, adjustedCameraY + peripheryHeight);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        
-        /// Since we're already centered on the sprite, it should be drawn at the camera's origin
-        mainSprite.draw(0, 0);
+
+        // Draw the sprite at its world position relative to the adjusted camera
+        float spriteDrawX = mainSprite.getX() - adjustedCameraX;
+        float spriteDrawY = mainSprite.getY() - adjustedCameraY;
+        mainSprite.draw(spriteDrawX, spriteDrawY);
     }
     else {
         // Standard drawing code for non-explorer mode

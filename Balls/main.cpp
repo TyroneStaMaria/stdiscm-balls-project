@@ -238,7 +238,7 @@ void display()
     glLoadIdentity();
 
     if (isExplorerMode) {
-        drawBorderLines(20.0f, 20.0f, 50);
+        drawBorderLines(20.0f, 20.0f, 300);
         Sprite& mainSprite = SpriteManager::getSprites().front();
         float centerX = mainSprite.getX() - peripheryWidth / 4.0f;
         float centerY = mainSprite.getY() - peripheryHeight / 3.0f;
