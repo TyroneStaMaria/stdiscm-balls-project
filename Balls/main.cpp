@@ -66,44 +66,47 @@ GLsizei ballsViewportHeight = 720;
 
 
 void keyboard(unsigned char key, int x, int y) {
-    float cameraSpeed = 5.0f;
+    
+    if (isExplorerMode) {
+        float cameraSpeed = 5.0f;
 
-    Sprite& currentSprite = SpriteManager::getSprites().front();
+        Sprite& currentSprite = SpriteManager::getSprites().front();
 
-    float spriteX = currentSprite.getX();
-    float spriteY = currentSprite.getY();
-    switch (key) {
-    case 'w': 
-        if(spriteY >= ballsViewportHeight){
-            currentSprite.setY(ballsViewportHeight);            
+        float spriteX = currentSprite.getX();
+        float spriteY = currentSprite.getY();
+        switch (key) {
+        case 'w': 
+            if(spriteY >= ballsViewportHeight){
+                currentSprite.setY(ballsViewportHeight);            
+                break;
+            }
+            currentSprite.moveUp(cameraSpeed); 
+            cout << currentSprite.getX() << ", " << currentSprite.getY() << endl;
+            break;
+        case 's': 
+            if(spriteY <= 0){
+                currentSprite.setY(0);
+                break;
+            }
+            currentSprite.moveDown(cameraSpeed); 
+            break;
+        case 'a': 
+            if(spriteX <= 0){
+                currentSprite.setX(0);
+                break;
+            }
+            currentSprite.moveLeft(cameraSpeed); 
+            break;
+        case 'd': 
+            if(spriteX >= ballsViewportWidth){
+                currentSprite.setX(ballsViewportWidth);
+                break;
+            }
+            currentSprite.moveRight(cameraSpeed); 
             break;
         }
-        currentSprite.moveUp(cameraSpeed); 
-        cout << currentSprite.getX() << ", " << currentSprite.getY() << endl;
-        break;
-    case 's': 
-        if(spriteY <= 0){
-            currentSprite.setY(0);
-            break;
-        }
-        currentSprite.moveDown(cameraSpeed); 
-        break;
-    case 'a': 
-        if(spriteX <= 0){
-            currentSprite.setX(0);
-            break;
-        }
-        currentSprite.moveLeft(cameraSpeed); 
-        break;
-    case 'd': 
-        if(spriteX >= ballsViewportWidth){
-            currentSprite.setX(ballsViewportWidth);
-            break;
-        }
-        currentSprite.moveRight(cameraSpeed); 
-        break;
+        glutPostRedisplay();
     }
-    glutPostRedisplay();
 }
 
 void drawBorderLines(float lineWidth, float borderWidth, int numLines) {
