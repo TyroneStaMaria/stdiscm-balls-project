@@ -19,7 +19,6 @@ public:
     void checkCanvasCollision();
     void drawScaled(float scale);
 
-    // position
     float x;
     float y;
 

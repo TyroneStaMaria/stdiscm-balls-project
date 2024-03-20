@@ -1,16 +1,12 @@
 #include "BallManager.h"
-#include "Wall.h"
 #include "Ball.h"
-
+#include "Point.h"
 #include <thread>
 #include <mutex>
 
 using namespace std;
 
-
 vector<Ball> BallManager::balls;
-vector<Wall> BallManager::walls;
-
 
 void BallManager::addBall(const Ball& ball) {
     balls.push_back(ball);
@@ -41,7 +37,6 @@ void BallManager::addBallsAngle(int n, Point position, float velocity, float sta
     float ballRadius = 5.0f;
 
     float angleIncrement = (n > 1) ? (endAngle - startAngle) / (n - 1) : 0;
-
 
     for (int i = startSpawn; i < endSpawn; i++) {
         float angleDegrees = startAngle + angleIncrement * i;
@@ -87,23 +82,13 @@ void BallManager::updateBalls(float deltaTime) {
     }
 
     for (auto& thread : threads) {
-        thread.join(); // Wait for all threads to finish
+        thread.join(); 
     }
 }
 
 void BallManager::drawBalls() {
     for (auto& ball : balls) {
         ball.draw();
-    }
-}
-
-void BallManager::addWall(const Wall& wall) {
-    walls.push_back(wall);
-}
-
-void BallManager::drawWalls() {
-    for (const auto& wall : walls) {
-        wall.draw();
     }
 }
 

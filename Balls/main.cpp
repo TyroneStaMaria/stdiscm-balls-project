@@ -1,4 +1,4 @@
-#include <GL/glut.h> // Include the GLUT header file
+#include <GL/glut.h> 
 #include <iostream>
 #include <numbers>
 #include <random>
@@ -35,9 +35,6 @@ Point endBall = {0, 0};
 pair<float, float> angle;
 pair<float, float> velocity;
 
-Point wallPoint1 = {0, 0};
-Point wallPoint2 = {0, 0};
-
 const int targetFPS = 60;
 const float targetFrameTime = 1.0f / targetFPS;
 float accumulator = 0.0f;
@@ -56,9 +53,8 @@ float cameraX = 0.0f;
 float cameraY = 0.0f;
 
 bool isExplorerMode = false;
-const float tileSize = 1000.0f; // Example tile size, adjust based on your game's scale
+const float tileSize = 1000.0f; 
 SpriteManager spriteManager = SpriteManager();
-float zoomFactor = 2.0f; // Example zoom factor, adjust based on your desired zoom level
 const float peripheryTileSize = 10.0f; // Tile size in pixels
 const int peripheryWidthTiles = 33; // Number of horizontal tiles
 const int peripheryHeightTiles = 19; // Number of vertical tiles
@@ -68,21 +64,16 @@ const float peripheryHeight = peripheryHeightTiles * peripheryTileSize;
 GLsizei ballsViewportWidth = 1280;
 GLsizei ballsViewportHeight = 720;
 
-void toggleExplorerMode() {
-    isExplorerMode = !isExplorerMode;
-}
 
-// Function to adjust camera movement based on keyboard input
 void keyboard(unsigned char key, int x, int y) {
     float cameraSpeed = 5.0f;
 
-    Sprite& currentSprite = SpriteManager::getSprites().front(); // Assuming the controlled sprite is the first one
+    Sprite& currentSprite = SpriteManager::getSprites().front();
 
     float spriteX = currentSprite.getX();
     float spriteY = currentSprite.getY();
     switch (key) {
     case 'w': 
-
         if(spriteY >= ballsViewportHeight){
             currentSprite.setY(ballsViewportHeight);            
             break;
@@ -91,12 +82,10 @@ void keyboard(unsigned char key, int x, int y) {
         cout << currentSprite.getX() << ", " << currentSprite.getY() << endl;
         break;
     case 's': 
-        
         if(spriteY <= 0){
             currentSprite.setY(0);
             break;
         }
-        
         currentSprite.moveDown(cameraSpeed); 
         break;
     case 'a': 
@@ -118,6 +107,7 @@ void keyboard(unsigned char key, int x, int y) {
 }
 
 void drawBorderLines(float lineWidth, float borderWidth, int numLines) {
+    
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -170,7 +160,6 @@ void drawBorderLines(float lineWidth, float borderWidth, int numLines) {
 
 static void sliderFloat(string label, float *var, float maxValue, float minValue = 0.0f)
 {
-
     ImGui::Text("%s", label.c_str());
     ImGui::Separator();
 
@@ -213,14 +202,11 @@ static void sliderInt(string label, int *var, int maxValue)
 
 void display()
 {
-    // First, clear the entire window with the main background color
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Define the viewport and scissor box for the balls section
     GLint ballsViewportX = 0 - static_cast<int>(backgroundOffsetX);
     GLint ballsViewportY = 220 - static_cast<int>(backgroundOffsetY);
-    
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(ballsViewportX, ballsViewportY, ballsViewportWidth, ballsViewportHeight);
@@ -243,31 +229,22 @@ void display()
         float centerX = mainSprite.getX() - peripheryWidth / 4.0f;
         float centerY = mainSprite.getY() - peripheryHeight / 3.0f;
 
-        //cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
-
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity(); 
-        // Assuming full screen is desired viewing area, adjust as needed
-        // gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
         gluOrtho2D(centerX, centerX + peripheryWidth, centerY, centerY + peripheryHeight);
 
-        // gluOrtho2D(cameraX, -(cameraX - peripheryWidth / 2), cameraY, -(cameraY - peripheryHeight / 2));
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
     }
 
     BallManager::drawBalls();
-    BallManager::drawWalls();
     spriteManager.drawSprites(cameraX, cameraY, isExplorerMode);
 
-    // Disable the scissor test to not affect subsequent rendering
     glDisable(GL_SCISSOR_TEST);
 
-    // Reset the viewport to the full window size for UI rendering
     ImGuiIO &io = ImGui::GetIO();
     glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
 
-    // Start the Dear ImGui frame and render UI
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
     ImGui::NewFrame();
@@ -285,20 +262,16 @@ void display()
         ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
         ImGui::Begin("Control Panel");
 
-        // Toggle between Explorer and Developer Mode
         if (isExplorerMode) {
             ImGui::Text("Controls");
             if (ImGui::Button("Developer Mode")) {
-                isExplorerMode = false; // Switch to Developer Mode
+                isExplorerMode = false; 
             }
         }
         else {
-
             const char* options[] = { "0", "1", "2", "3" };
-
             for (int i = 0; i < IM_ARRAYSIZE(options); i++)
             {
-
                 if (spawning)
                 {
                     ImGui::BeginDisabled();
@@ -312,10 +285,8 @@ void display()
                     if (ImGui::RadioButton(options[i], &currentForm, i))
                     {
                         n = 0;
-
                         startBall = { 0, 0 };
                         endBall = { 0, 0 };
-
                         angle = { 0, 0 };
                         velocity = { 0, 0 };
                     }
@@ -343,53 +314,42 @@ void display()
                 break;
             case 1:
                 sliderInt("n", &n, 10000);
-
                 sliderFloat("start x", &startBall.x, ballsViewportWidth);
                 sliderFloat("start y", &startBall.y, ballsViewportHeight);
                 sliderFloat("end x", &endBall.x, ballsViewportWidth);
                 sliderFloat("end y", &endBall.y, ballsViewportHeight);
                 sliderFloat("angle", &angle.first, 360.0f);
                 sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-                // spawning = ImGui::Button("Spawn Ball");
                 if (ImGui::Button("Spawn Ball") && !spawning)
                 {
                     spawning = true;
                     ballsSpawned = 0;
-                    // BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first);
                 }
                 break;
             case 2:
                 sliderInt("n", &n, 10000);
-
                 sliderFloat("x", &startBall.x, ballsViewportWidth);
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
                 sliderFloat("start angle", &angle.first, 360.0f);
                 sliderFloat("end angle", &angle.second, 360.0f);
                 sliderFloat("velocity", &velocity.first, 2000.0f, 300.0f);
-                // spawning = ImGui::Button("Spawn Ball");
-
                 if (ImGui::Button("Spawn Ball"))
                 {
                     spawning = true;
                     ballsSpawned = 0;
-                    // BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second);
                 }
                 break;
             case 3:
                 sliderInt("n", &n, 10000);
-
                 sliderFloat("x", &startBall.x, ballsViewportWidth);
                 sliderFloat("y", &startBall.y, ballsViewportHeight);
                 sliderFloat("angle", &angle.first, 360.0f);
                 sliderFloat("start velocity", &velocity.first, 2000.0f);
                 sliderFloat("end velocity", &velocity.second, 2000.0f, 300.0f);
-                // spawning = ImGui::Button("Spawn Ball");
-
                 if (ImGui::Button("Spawn Ball"))
                 {
                     spawning = true;
                     ballsSpawned = 0;
-                    // BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first);
                 }
                 break;
             }
@@ -400,7 +360,7 @@ void display()
 
             ImGui::Text("Controls");
             if (ImGui::Button("Explorer Mode")) {
-                isExplorerMode = !isExplorerMode; // Toggle the explorer mode state
+                isExplorerMode = !isExplorerMode; 
             }
         }
         
@@ -415,7 +375,6 @@ void display()
 
         ImGui::End();
 
-        // Render ImGui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glutSwapBuffers();
@@ -425,11 +384,11 @@ void display()
 
 void update(int value){
     static int lastTime = glutGet(GLUT_ELAPSED_TIME);
-    static int frameCount = 0; // Count of frames since the last FPS calculation
-    static float lastFpsTime = 0.0f; // Last time the FPS was updated
+    static int frameCount = 0; 
+    static float lastFpsTime = 0.0f; 
 
     int currentTime = glutGet(GLUT_ELAPSED_TIME);
-    float deltaTime = (currentTime - lastTime) / 1000.0f; // Time since the last frame in seconds
+    float deltaTime = (currentTime - lastTime) / 1000.0f; 
     lastTime = currentTime;
 
     accumulator += deltaTime;
@@ -451,11 +410,9 @@ void update(int value){
             BallManager::addBallsDistance(n, startBall, endBall, velocity.first, angle.first, ballsSpawned, currBatch);
             break;
         case 2:
-
             BallManager::addBallsAngle(n, startBall, velocity.first, angle.first, angle.second, ballsSpawned, currBatch);
             break;
         case 3:
-
             BallManager::addBallsVelocity(n, startBall, velocity.first, velocity.second, angle.first, ballsSpawned, currBatch);
             break;
         }
@@ -464,16 +421,16 @@ void update(int value){
 
     while (accumulator >= targetFrameTime)
     {
-        BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
+        BallManager::updateBalls(deltaTime);
         accumulator -= targetFrameTime;
     }
 
     frameCount++;
     float fpsUpdateTime = currentTime / 1000.0f - lastFpsTime;
-    if (fpsUpdateTime >= 0.5f) { // Update FPS every 0.5 seconds
+    if (fpsUpdateTime >= 0.5f) {
         calculatedFrameRate = frameCount / fpsUpdateTime; // Calculate FPS
-        frameCount = 0; // Reset frame count for the next FPS calculation
-        lastFpsTime = currentTime / 1000.0f; // Reset the FPS timer
+        frameCount = 0;
+        lastFpsTime = currentTime / 1000.0f; 
     }
 
     float frameProcessingTime = (glutGet(GLUT_ELAPSED_TIME) - currentTime) / 1000.0f;
@@ -481,13 +438,11 @@ void update(int value){
     int delay = max(0, static_cast<int>(timeUntilNextFrame * 1000.0f));
 
     glutPostRedisplay();
-    glutTimerFunc(delay, update, 0); // Adjust the delay dynamically based on the frame processing time
+    glutTimerFunc(delay, update, 0); 
 }
 
 int main(int argc, char **argv)
 {
-
-
     glutInit(&argc, argv);
 #ifdef __FREEGLUT_EXT_H__
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
@@ -499,19 +454,15 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
     glutTimerFunc(1, update, 0);
 
-    // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
 
     ImGui_ImplGLUT_InstallFuncs();
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-    // Setup Dear ImGui style
     ImGui::StyleColorsDark();
 
-    // Setup Platform/Renderer backends
     ImGui_ImplGLUT_Init();
 
 #ifdef GL_VERSION_2_0
@@ -526,10 +477,8 @@ int main(int argc, char **argv)
  
     glutKeyboardFunc(keyboard);
 
-    // Main loop
     glutMainLoop();
 
-    // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGLUT_Shutdown();
     ImGui::DestroyContext();

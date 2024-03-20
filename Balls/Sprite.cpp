@@ -1,7 +1,7 @@
 #include "Sprite.h"
 
 Sprite::Sprite()
-    : x(0), y(0) { // Initializes x and y to some default value, e.g., 0
+    : x(0), y(0) { 
 }
 
 Sprite::Sprite(float startX, float startY)
@@ -15,13 +15,9 @@ void Sprite::draw(float cameraX, float cameraY) {
 
     glColor3ub(157, 193, 131);
 
-    // Top vertex
     glVertex2f(x, y + height);
-    // Right vertex
     glVertex2f(x + height, y);
-    // Bottom vertex
     glVertex2f(x, y - height);
-    // Left vertex
     glVertex2f(x - height, y);
 
     glEnd();
@@ -49,11 +45,11 @@ void Sprite::moveRight(float amount) {
 }
 
 float Sprite::getX() const {
-    return x; // Return the private member variable x
+    return x; 
 }
 
 float Sprite::getY() const {
-    return y; // Return the private member variable y
+    return y; 
 }
 
 void Sprite::setX(float num){

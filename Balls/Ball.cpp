@@ -1,34 +1,29 @@
 #include "Ball.h"
 #include <cmath>
 
-
-
 Ball::Ball(float startX, float startY, float velocity, float startAngle)
     : x(startX), y(startY), velocity(velocity), angle(startAngle) {
-
-
         float angleRadians = startAngle * (PI / 180.0f);
         dx = velocity * std::cos(angleRadians);
         dy = velocity * std::sin(angleRadians);
     }
 
-
 void Ball::draw() {
     glBegin(GL_TRIANGLE_FAN);
     glColor3ub(227, 151, 116);
-    glVertex2f(x, y); // Center of circle
+    glVertex2f(x, y); 
     for (int i = 0; i <= 20; i++) {
-        float angle = 2.0f * PI * float(i) / float(20);  // Calculate the angle
-        float xComponent = radius * cosf(angle); // Calculate the x component
-        float yComponent = radius * sinf(angle); // Calculate the y component
+        float angle = 2.0f * PI * float(i) / float(20); 
+        float xComponent = radius * cosf(angle); 
+        float yComponent = radius * sinf(angle); 
 
         glVertex2f(x + xComponent, y + yComponent);
     }
     glEnd();
 }
 
+// Predict the ball's next position based on its current velocity
 void Ball::move(float deltaTime) {
-    // Predict the ball's next position based on its current velocity
     x += dx * deltaTime;
     y += dy * deltaTime;
 }
@@ -76,11 +71,11 @@ void Ball::normalizeVelocity() {
 
 void Ball::drawScaled(float scaleFactor) {
     glBegin(GL_TRIANGLE_FAN);
-    glColor3ub(227, 151, 116); // Set ball color
+    glColor3ub(227, 151, 116); 
     for (int i = 0; i <= 20; i++) {
-        float angle = 2.0f * PI * float(i) / float(20); // Calculate the angle
-        float xComponent = (radius * scaleFactor) * cosf(angle); // Calculate the x component with scaling
-        float yComponent = (radius * scaleFactor) * sinf(angle); // Calculate the y component with scaling
+        float angle = 2.0f * PI * float(i) / float(20); 
+        float xComponent = (radius * scaleFactor) * cosf(angle);
+        float yComponent = (radius * scaleFactor) * sinf(angle); 
 
         glVertex2f(x + xComponent, y + yComponent);
     }
