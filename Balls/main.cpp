@@ -475,7 +475,24 @@ void update(int value) {
 
     while (accumulator >= targetFrameTime)
     {
-        BallManager::updateBalls(deltaTime); // Update all balls with the time elapsed
+        float leftBoundary = 0.0f;
+        float rightBoundary = ballsViewportWidth;
+        float bottomBoundary = 0.0f;
+        float topBoundary = ballsViewportHeight;
+
+        if (isExplorerMode) {
+            Sprite& mainSprite = SpriteManager::getSprites().front();
+            // Example dynamic boundaries based on a central sprite position
+            float centerX = mainSprite.getX();
+            float centerY = mainSprite.getY();
+
+            float leftBoundary = centerX - peripheryWidth / 2.0f;
+            float rightBoundary = centerX + peripheryWidth / 2.0f;
+            float topBoundary = centerY + peripheryHeight / 2.0f;
+            float bottomBoundary = centerY - peripheryHeight / 2.0f;
+        }
+
+        BallManager::updateBalls(deltaTime, leftBoundary, rightBoundary, topBoundary, bottomBoundary); // Update all balls with the time elapsed
         accumulator -= targetFrameTime;
     }
 

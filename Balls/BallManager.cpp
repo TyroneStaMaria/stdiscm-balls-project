@@ -56,7 +56,7 @@ void BallManager::addBallsVelocity(int n, Point position, float startVelocity, f
     }
 }
 
-void BallManager::updateBalls(float deltaTime) {
+void BallManager::updateBalls(float deltaTime, float leftBoundary, float rightBoundary, float topBoundary, float bottomBoundary) {
 
     const size_t numThreads = balls.size() > 1000 ? thread::hardware_concurrency(): 1;
     vector<thread> threads(numThreads);
@@ -78,11 +78,15 @@ void BallManager::updateBalls(float deltaTime) {
     for (int i = 0; i < numThreads; ++i) {
         int start = i * ballsPerThread;
         int end = (i + 1 == numThreads) ? balls.size() : (i + 1) * ballsPerThread;
-        threads[i] = std::thread(updateRange, start, end, deltaTime);
+        // Now pass the boundaries to updateRange
+        threads[i] = std::thread([=] {
+            BallManager::updateRange(start, end, deltaTime, leftBoundary, rightBoundary, topBoundary, bottomBoundary);
+        });
     }
 
+    // Join threads as before
     for (auto& thread : threads) {
-        thread.join(); 
+        thread.join();
     }
 }
 
@@ -94,4 +98,28 @@ void BallManager::drawBalls() {
 
 vector<Ball> BallManager::getBalls() {
     return balls;
+}
+
+// Assuming the boundaries are passed to this function. Adjust types and values as necessary.
+void BallManager::updateRange(int start, int end, float deltaTime, float leftBoundary, float rightBoundary, float topBoundary, float bottomBoundary) {
+    for (int i = start; i < end; i++) {
+        // Calculate the ball's next position based on its current velocity components
+        float nextX = balls[i].x + balls[i].dx * deltaTime;
+        float nextY = balls[i].y + balls[i].dy * deltaTime;
+
+        // Adjust next position if it's beyond the boundaries
+        // Here we simply reverse the direction, but you might want to adjust based on your game's physics
+        if (nextX < leftBoundary || nextX > rightBoundary) {
+            balls[i].dx *= -1; // Reverse direction
+            nextX = std::max(leftBoundary, std::min(nextX, rightBoundary)); // Clamp to boundary
+        }
+        if (nextY < bottomBoundary || nextY > topBoundary) {
+            balls[i].dy *= -1; // Reverse direction
+            nextY = std::max(bottomBoundary, std::min(nextY, topBoundary)); // Clamp to boundary
+        }
+
+        // Update the ball position
+        balls[i].x = nextX;
+        balls[i].y = nextY;
+    }
 }
