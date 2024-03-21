@@ -3,6 +3,8 @@
 #include <numbers>
 #include <random>
 #include <typeinfo>
+#include <algorithm>
+
 
 #include "imgui.h"
 
@@ -88,7 +90,7 @@ void keyboard(unsigned char key, int x, int y) {
             break;
         }
         currentSprite.moveUp(cameraSpeed); 
-        cout << currentSprite.getX() << ", " << currentSprite.getY() << endl;
+        // cout << currentSprite.getX() << ", " << currentSprite.getY() << endl;
         break;
     case 's': 
         
@@ -118,50 +120,64 @@ void keyboard(unsigned char key, int x, int y) {
 }
 
 void drawBorderLines(float lineWidth, float borderWidth, int numLines) {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glOrtho(0, ballsViewportWidth, 0, ballsViewportHeight, -1.0, 1.0);
-
-    glLineWidth(lineWidth);
-
-    glColor3f(0.0f, 0.0f, 0.0f);
 
     Sprite& mainSprite = SpriteManager::getSprites().front();
     float spriteX = mainSprite.getX();
     float spriteY = mainSprite.getY();
+    float centerX = spriteX - peripheryWidth / 2.0f;
+    float centerY = spriteY - peripheryHeight / 2.0f;
 
-    if (spriteY >= ballsViewportHeight - borderWidth) {
-        for (int i = 0; i < numLines; i++) {
+    // cout << spriteX << endl; 
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // gluOrtho2D(0, ballsViewportWidth, 0, ballsViewportHeight);
+
+    gluOrtho2D(0, peripheryWidth + centerX, 0, peripheryHeight + centerY);
+    glLineWidth(lineWidth);
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+
+    float borderHeightOffset = 0;
+    float borderWidthOffset = 0;
+    // cout << centerY << endl;
+    if (spriteY >= ballsViewportHeight - numLines - 60) {
+        // cout << ballsViewportHeight + 100 << endl;
+
+        for (int i = 0; i < numLines + spriteY - 450; i++) {
             glBegin(GL_LINES);
-            glVertex2f(0.0f, ballsViewportHeight - i);
-            glVertex2f(ballsViewportWidth, ballsViewportHeight - i);
+            glVertex2f(0.0f, (ballsViewportHeight + 100) - i);
+            glVertex2f(ballsViewportWidth + 400, (ballsViewportHeight + 100) - i);
             glEnd();
         }
     }
 
-    if (spriteY <= borderWidth) {
-        for (int i = 0; i < numLines; i++) {
+    if (spriteY <= numLines) {
+        for (int i = 0; i < numLines - spriteY - 50; i++) {
             glBegin(GL_LINES);
             glVertex2f(0.0f, i);
-            glVertex2f(ballsViewportWidth, i);
+            glVertex2f(ballsViewportWidth + 100, i);
             glEnd();
         }
     }
-    if (spriteX <= borderWidth) {
-        for (int i = 0; i < numLines; i++) {
+    if (spriteX <= numLines) {
+        for (int i = 0; i < numLines - spriteX - 20; i++) {
             glBegin(GL_LINES);
             glVertex2f(i, 0.0f);
             glVertex2f(i, ballsViewportHeight);
             glEnd();
         }
     }
-    if (spriteX >= ballsViewportWidth - borderWidth) {
-        for (int i = 0; i < numLines; i++) {
+
+    // cout <<  ballsViewportWidth - numLines << " " << ballsViewportWidth << endl;
+    if (spriteX >= ballsViewportWidth - 50) {
+        for (int i = 0; i < numLines + spriteX - 650; i++) {
             glBegin(GL_LINES);
-            glVertex2f(ballsViewportWidth - i, 0.0f);
-            glVertex2f(ballsViewportWidth - i, ballsViewportHeight);
+            glVertex2f((ballsViewportWidth - 550) + i, 0.0f);
+            glVertex2f((ballsViewportWidth - 550) + i, ballsViewportHeight);
+
             glEnd();
         }
     }
@@ -238,22 +254,34 @@ void display()
     glLoadIdentity();
 
     if (isExplorerMode) {
-        drawBorderLines(20.0f, 20.0f, 300);
-        Sprite& mainSprite = SpriteManager::getSprites().front();
-        float centerX = mainSprite.getX() - peripheryWidth / 4.0f;
-        float centerY = mainSprite.getY() - peripheryHeight / 3.0f;
+         //float leftBoundary = 0.0f, rightBoundary = ballsViewportWidth, bottomBoundary = 0.0f, topBoundary = ballsViewportHeight;
 
-        //cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
+            drawBorderLines(20.0f, 20.0f, 100);
+            Sprite& mainSprite = SpriteManager::getSprites().front();
+            float centerX = mainSprite.getX() - peripheryWidth / 2.5f;
+            float centerY = mainSprite.getY() - peripheryHeight / 2.5f;
+            float cameraX = mainSprite.getX();
+            float cameraY = mainSprite.getY();
 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity(); 
-        // Assuming full screen is desired viewing area, adjust as needed
-        // gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
-        gluOrtho2D(centerX, centerX + peripheryWidth, centerY, centerY + peripheryHeight);
+            cout << cameraX << endl;
 
-        // gluOrtho2D(cameraX, -(cameraX - peripheryWidth / 2), cameraY, -(cameraY - peripheryHeight / 2));
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+            float leftBoundary = cameraX - peripheryWidth / 2.0f;
+            float rightBoundary = cameraX + peripheryWidth / 2.0f;
+            float topBoundary = cameraY + peripheryHeight / 2.0f;
+            float bottomBoundary = cameraY - peripheryHeight / 2.0f;
+
+            //cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
+
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            // Assuming full screen is desired viewing area, adjust as needed
+            // gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
+            //gluOrtho2D(centerX, centerX + peripheryWidth, centerY, centerY + peripheryHeight);
+            gluOrtho2D(leftBoundary, rightBoundary, bottomBoundary, topBoundary);
+
+            // gluOrtho2D(cameraX, -(cameraX - peripheryWidth / 2), cameraY, -(cameraY - peripheryHeight / 2));
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
     }
 
     BallManager::drawBalls();
@@ -522,7 +550,11 @@ int main(int argc, char **argv)
 
     ImGui_ImplGLUT_InstallFuncs();
 
-    spriteManager.addSprites(Sprite(20, 20));
+    spriteManager.addSprites(Sprite(1280,0));
+    // Point p1 = {0, 0};
+    // Point p2 = {0, 720};
+    // Wall w = Wall(p1, p2);
+    // BallManager::addWall(w);
  
     glutKeyboardFunc(keyboard);
 
