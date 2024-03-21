@@ -76,6 +76,10 @@ void toggleExplorerMode() {
 
 // Function to adjust camera movement based on keyboard input
 void keyboard(unsigned char key, int x, int y) {
+    if(!isExplorerMode){
+        return;
+    }
+
     float cameraSpeed = 5.0f;
 
     Sprite& currentSprite = SpriteManager::getSprites().front(); // Assuming the controlled sprite is the first one
@@ -106,6 +110,10 @@ void keyboard(unsigned char key, int x, int y) {
             currentSprite.setX(0);
             break;
         }
+        if(spriteX >= ballsViewportWidth - 200){
+            currentSprite.moveLeft(cameraSpeed * 2);
+            break;
+        }
         currentSprite.moveLeft(cameraSpeed); 
         break;
     case 'd': 
@@ -113,6 +121,13 @@ void keyboard(unsigned char key, int x, int y) {
             currentSprite.setX(ballsViewportWidth);
             break;
         }
+
+        if(spriteX >= ballsViewportWidth - 200){
+            currentSprite.moveRight(cameraSpeed * 2);
+            break;
+        }
+
+        
         currentSprite.moveRight(cameraSpeed); 
         break;
     }
@@ -172,7 +187,7 @@ void drawBorderLines(float lineWidth, float borderWidth, int numLines) {
     }
 
     // cout <<  ballsViewportWidth - numLines << " " << ballsViewportWidth << endl;
-    if (spriteX >= ballsViewportWidth - 50) {
+    if (spriteX >= ballsViewportWidth - 150) {
         for (int i = 0; i < numLines + spriteX - 650; i++) {
             glBegin(GL_LINES);
             glVertex2f((ballsViewportWidth - 550) + i, 0.0f);
@@ -550,7 +565,7 @@ int main(int argc, char **argv)
 
     ImGui_ImplGLUT_InstallFuncs();
 
-    spriteManager.addSprites(Sprite(1280,0));
+    spriteManager.addSprites(Sprite(0,0));
     // Point p1 = {0, 0};
     // Point p2 = {0, 720};
     // Wall w = Wall(p1, p2);
