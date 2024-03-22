@@ -2,7 +2,7 @@
 
 STDISCM Problem Set # 1
 
-Authors: Faith Griffin and Tyrone Sta. Maria
+Authors: Janine Chua Ching, Ayisha Dytoc, Faith Griffin, and Tyrone Sta. Maria
 
 This project is a particle simulator that utilizes concurrent programming alongside C++ and OpenGL.
 
