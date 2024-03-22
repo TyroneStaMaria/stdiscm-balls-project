@@ -269,7 +269,6 @@ void display()
     glLoadIdentity();
 
     if (isExplorerMode) {
-         //float leftBoundary = 0.0f, rightBoundary = ballsViewportWidth, bottomBoundary = 0.0f, topBoundary = ballsViewportHeight;
 
             drawBorderLines(20.0f, 20.0f, 100);
             Sprite& mainSprite = SpriteManager::getSprites().front();
@@ -280,21 +279,16 @@ void display()
 
             cout << cameraX << endl;
 
-            float leftBoundary = cameraX - peripheryWidth / 2.0f;
-            float rightBoundary = cameraX + peripheryWidth / 2.0f;
-            float topBoundary = cameraY + peripheryHeight / 2.0f;
-            float bottomBoundary = cameraY - peripheryHeight / 2.0f;
-
-            //cout << mainSprite.getX() << ", " << mainSprite.getY() << endl;
+            float leftBoundary = cameraX - peripheryWidth / zoomFactor;
+            float rightBoundary = cameraX + peripheryWidth / zoomFactor;
+            float topBoundary = cameraY + peripheryHeight / zoomFactor;
+            float bottomBoundary = cameraY - peripheryHeight / zoomFactor;
 
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            // Assuming full screen is desired viewing area, adjust as needed
-            // gluOrtho2D(0, peripheryWidth, 0, peripheryHeight);
-            //gluOrtho2D(centerX, centerX + peripheryWidth, centerY, centerY + peripheryHeight);
+
             gluOrtho2D(leftBoundary, rightBoundary, bottomBoundary, topBoundary);
 
-            // gluOrtho2D(cameraX, -(cameraX - peripheryWidth / 2), cameraY, -(cameraY - peripheryHeight / 2));
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
     }
